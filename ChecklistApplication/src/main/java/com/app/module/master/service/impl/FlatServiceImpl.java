@@ -57,7 +57,6 @@ public class FlatServiceImpl implements IFlatService {
 		FlatType flatType = new FlatType();
 		flatType.setFlatTypeId(flatBean.getFlatTypeId());
 		flat.setFlatType(flatType);
-		flat.setFloor(floor);
 		flatDao.save(flat);
 		return ResponseBean.builder().message(MessageConstant.DATA_SAVE_SUCCESS)
 				.messageDescription(MessageConstant.FLAT_SAVE_SUCCESS_MESSAGE).status(true)
@@ -77,6 +76,9 @@ public class FlatServiceImpl implements IFlatService {
 				Building building = new Building();
 				building.setBuildingId(flatBean.getBuildingId());
 				flat.setBuilding(building);
+				FlatType flatType = new FlatType();
+				flatType.setFlatTypeId(flatBean.getFlatTypeId());
+				flat.setFlatType(flatType);
 				Floor floor = new Floor();
 				floor.setFloorId(flatBean.getFloorId());
 				flat.setFloor(floor);
