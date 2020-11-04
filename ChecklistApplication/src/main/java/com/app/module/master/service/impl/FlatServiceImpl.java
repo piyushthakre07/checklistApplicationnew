@@ -62,7 +62,7 @@ public class FlatServiceImpl implements IFlatService {
 				.messageDescription(MessageConstant.FLAT_SAVE_SUCCESS_MESSAGE).status(true)
 				.satusCode(HttpStatus.CREATED.value()).hasError(false).build();
 	}
-
+ 
 	@Override
 	public ResponseBean insertMultipleFlat(FlatRequestBean flatRequestBean) throws CheckListAppException {
 		// flatValidation.checkDuplicateFlat(flatBean);
