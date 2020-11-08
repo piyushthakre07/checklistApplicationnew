@@ -41,7 +41,7 @@ public class AssignRoomToFlatServiceImpl implements IAssignRoomToFlatService {
 
 	@Autowired
 	IAssignRoomToFlatDao assignRoomToFlatDao;
-	
+
 	@Autowired
 	IFlatDao flatDao;
 
@@ -106,7 +106,20 @@ public class AssignRoomToFlatServiceImpl implements IAssignRoomToFlatService {
 	public ResponseBean getAssignRoomToFlats() throws CheckListAppException {
 		try {
 			return ResponseBean.builder()
-					.data(prepareAssignRoomToFlatBeansFromAssignRoomToFlat(assignRoomToFlatDao.findAll()))
+					.data(prepareAssignRoomToFlatBeansFromAssignRoomToFlat(assignRoomToFlatDao.findAll())).status(true)
+					.hasError(false).message(MessageConstant.SUCCESS_MESSAGE).build();
+		} catch (Exception e) {
+			throw new CheckListAppException(CheckListAppException.SERVER_ERROR, MessageConstant.SERVER_ERROR_MESSAGE,
+					MessageConstant.QUERY_FETCH_EXCPTION);
+		}
+	}
+
+	@Override
+	public ResponseBean getRoomByFlatId(Long flatId) throws CheckListAppException {
+		try {
+			return ResponseBean.builder()
+					.data(prepareRoomBeansFromAssignRoomToFlat(
+							assignRoomToFlatDao.getAssignRoomToFlatByFlatId(flatId)))
 					.status(true).hasError(false).message(MessageConstant.SUCCESS_MESSAGE).build();
 		} catch (Exception e) {
 			throw new CheckListAppException(CheckListAppException.SERVER_ERROR, MessageConstant.SERVER_ERROR_MESSAGE,
@@ -126,11 +139,11 @@ public class AssignRoomToFlatServiceImpl implements IAssignRoomToFlatService {
 			BuildingBean buildingBean = new BuildingBean();
 			BeanUtils.copyProperties(assignRoomToFlat.getBuilding(), buildingBean);
 			assignRoomToFlatResponseBean.setBuilding(buildingBean);
-			
-			FlatTypeBean flatTypeBean=new FlatTypeBean();
+
+			FlatTypeBean flatTypeBean = new FlatTypeBean();
 			BeanUtils.copyProperties(assignRoomToFlat.getFlatType(), flatTypeBean);
 			assignRoomToFlatResponseBean.setFlatType(flatTypeBean);
-			
+
 			FlatBean flatBean = new FlatBean();
 			BeanUtils.copyProperties(assignRoomToFlat.getFlat(), flatBean);
 			assignRoomToFlatResponseBean.setFlat(flatBean);
@@ -138,4 +151,15 @@ public class AssignRoomToFlatServiceImpl implements IAssignRoomToFlatService {
 		});
 		return assignRoomToFlatBeans;
 	}
+
+	private List<RoomBean> prepareRoomBeansFromAssignRoomToFlat(List<AssignRoomToFlat> allAssignRoomToFlats) {
+		List<RoomBean> roomBeans = new ArrayList<RoomBean>();
+		allAssignRoomToFlats.forEach(assignRoomToFlat -> {
+			RoomBean roomBean = new RoomBean();
+			BeanUtils.copyProperties(assignRoomToFlat.getRoom(), roomBean);
+			roomBeans.add(roomBean);
+		});
+		return roomBeans;
+	}
+
 }

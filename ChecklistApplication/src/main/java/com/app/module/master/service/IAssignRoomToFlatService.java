@@ -12,4 +12,6 @@ public interface IAssignRoomToFlatService {
 
 	ResponseBean getAssignRoomToFlats() throws CheckListAppException;
 
+	ResponseBean getRoomByFlatId(Long flatId) throws CheckListAppException;
+
 }

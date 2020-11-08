@@ -15,4 +15,7 @@ public interface IAssignRoomToFlatDao extends JpaRepository<AssignRoomToFlat, Lo
 
 	@Query("select assignRoomToFlat from AssignRoomToFlat assignRoomToFlat where active=true")
 	List<AssignRoomToFlat> getActiveAssignRoomToFlats();
+
+	@Query("select assignRoomToFlat from AssignRoomToFlat assignRoomToFlat where assignRoomToFlat.flat.flatId=?1 and active=true")
+	List<AssignRoomToFlat> getAssignRoomToFlatByFlatId(Long flatId);
 }
