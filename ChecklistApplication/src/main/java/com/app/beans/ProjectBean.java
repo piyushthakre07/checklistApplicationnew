@@ -2,12 +2,8 @@ package com.app.beans;
 
 import java.util.Date;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,9 +13,6 @@ public class ProjectBean {
 
 	private Long projectId;
 
-	@NotBlank(message = "Project Name required and should not be blank or empty")
-	@ApiModelProperty(value = "projectName", required = true)
-	@Size(min = 3, max = 30, message = "Project name must be between 3 and 30 characters")
 	private String projectName;
 
 	private String description;

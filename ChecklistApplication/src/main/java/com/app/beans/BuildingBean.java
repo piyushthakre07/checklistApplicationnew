@@ -3,9 +3,6 @@ package com.app.beans;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -21,9 +18,6 @@ public class BuildingBean implements Serializable{
 
 	private Long buildingId;
 
-	@NotBlank(message = "Building Name required and should not be blank or empty")
-	@ApiModelProperty(value = "buildingName", required = true)
-	@Size(min = 3, max = 30, message = "Building name must be between 3 and 30 characters")
 	private String buildingName;
 
 	private String description;

@@ -2,8 +2,6 @@ package com.app.beans;
 
 import java.util.Date;
 
-import javax.validation.constraints.NotBlank;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -16,8 +14,6 @@ public class FlatBean {
 
 	private Long flatId;
 
-	@NotBlank(message = "Flat Name required and should not be blank or empty")
-	@ApiModelProperty(value = "flatName", required = true)
 	private String flatName;
 
 	private String description;

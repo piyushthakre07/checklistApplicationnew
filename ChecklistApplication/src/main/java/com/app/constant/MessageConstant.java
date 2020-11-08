@@ -7,7 +7,6 @@ public class MessageConstant {
 	public static String SERVER_ERROR_MESSAGE = "Error while processing.";
 	public static String INVALID_REQUEST = "Invalid Request";
 	
-	// vishwajit
 	public static String SUCCESS_MESSAGE = "Success";
 	public static String FAILED_MESSAGE = "Failed";
 	public static String QUERY_FETCH_EXCPTION = "Error occured while fetching the data.";
@@ -33,8 +32,4 @@ public class MessageConstant {
 	public static String TASK_SAVE_SUCCESS_MESSAGE = "Successfully added task.";
 	public static String WORK_TYPE_SAVE_SUCCESS_MESSAGE = "successfully added work type.";
 	
-	
-	
-	
-
 }

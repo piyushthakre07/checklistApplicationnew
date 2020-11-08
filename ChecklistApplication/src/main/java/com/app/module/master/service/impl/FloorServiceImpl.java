@@ -59,7 +59,10 @@ public class FloorServiceImpl implements IFloorService {
 		try {
 			floorRequestBean.getFloorBeanList().forEach(floorBean -> {
 				Floor floor = new Floor();
-				BeanUtils.copyProperties(floorBean, floor);
+				floor.setFloorName(floorBean.getFloorName());
+				floor.setActive(floorBean.isActive());
+				floor.setDescription(floorBean.getDescription());
+				//BeanUtils.copyProperties(floorBean, floor);
 				Project project = new Project();
 				project.setProjectId(floorRequestBean.getProjectId());
 				floor.setProject(project);

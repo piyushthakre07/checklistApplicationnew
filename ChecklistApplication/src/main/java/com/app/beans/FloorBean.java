@@ -2,8 +2,6 @@ package com.app.beans;
 
 import java.util.Date;
 
-import javax.validation.constraints.NotBlank;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -16,8 +14,6 @@ public class FloorBean {
 
 	private Long floorId;
 
-	@NotBlank(message = "Floor Name required and should not be blank or empty")
-	@ApiModelProperty(value = "floorName", required = true)
 	private String floorName;
 
 	private String description;
