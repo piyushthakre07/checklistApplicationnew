@@ -12,4 +12,6 @@ public interface IAssignTaskToFlatService {
 
 	ResponseBean getAssignTaskToFlats() throws CheckListAppException;
 
+	ResponseBean getTaskByFlatIdAndWorktype(Long flatId, Long workTypeId) throws CheckListAppException;
+
 }

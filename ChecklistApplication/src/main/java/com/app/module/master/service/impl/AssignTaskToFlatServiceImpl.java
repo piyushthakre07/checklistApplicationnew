@@ -108,6 +108,19 @@ public class AssignTaskToFlatServiceImpl implements IAssignTaskToFlatService {
 					MessageConstant.QUERY_FETCH_EXCPTION);
 		}
 	}
+	
+	@Override
+	public ResponseBean getTaskByFlatIdAndWorktype(Long flatId,Long workTypeId) throws CheckListAppException {
+		try {
+			return ResponseBean.builder()
+					.data(prepareTaskBeansFromAssignTaskToFlat(
+							assignTaskToFlatDao.getTaskByFlatIdAndWorktype(flatId, workTypeId)))
+					.status(true).hasError(false).message(MessageConstant.SUCCESS_MESSAGE).build();
+		} catch (Exception e) {
+			throw new CheckListAppException(CheckListAppException.SERVER_ERROR, MessageConstant.SERVER_ERROR_MESSAGE,
+					MessageConstant.QUERY_FETCH_EXCPTION);
+		}
+	}
 
 	@Override
 	public ResponseBean getAssignTaskToFlats() throws CheckListAppException {
@@ -152,5 +165,16 @@ public class AssignTaskToFlatServiceImpl implements IAssignTaskToFlatService {
 			assignTaskToFlatBeans.add(assignTaskToFlatResponseBean);
 		});
 		return assignTaskToFlatBeans;
+	}
+	
+	private List<TaskBean> prepareTaskBeansFromAssignTaskToFlat(
+			List<AssignTaskToFlat> allAssignTaskToFlats) {
+		List<TaskBean> taskBeans = new ArrayList<TaskBean>();
+		allAssignTaskToFlats.forEach(assignTaskToFlat -> {
+			TaskBean taskBean = new TaskBean();
+			BeanUtils.copyProperties(assignTaskToFlat.getTask(), taskBean);
+			taskBeans.add(taskBean);
+		});
+		return taskBeans;
 	}
 }

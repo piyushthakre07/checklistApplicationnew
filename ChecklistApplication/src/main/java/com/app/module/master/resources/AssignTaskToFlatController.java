@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -53,6 +54,12 @@ public class AssignTaskToFlatController {
 	@GetMapping(value = "/getAllActiveAssignTaskToFlat")
 	public ResponseEntity<Object> getAllActiveAssignTaskToFlat() throws CheckListAppException {
 		ResponseBean responseBean = assignTaskToFlatService.getActiveAssignTaskToFlats();
+		return new ResponseEntity<Object>(responseBean, HttpStatus.OK);
+	}
+	
+	@GetMapping(value = "/getTaskByFlatIdAndWorktype/{flatId}/{workTypeId}")
+	public ResponseEntity<Object> getTaskByFlatIdAndWorktype(@PathVariable("flatId") Long flatId,@PathVariable("workTypeId") Long workTypeId ) throws CheckListAppException {
+		ResponseBean responseBean = assignTaskToFlatService.getTaskByFlatIdAndWorktype(flatId, workTypeId);
 		return new ResponseEntity<Object>(responseBean, HttpStatus.OK);
 	}
 
