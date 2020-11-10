@@ -40,9 +40,6 @@ public class Project extends AuditMaster {
 	private Set<Building> buildings;
 	
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "project")
-	private Set<Floor> floor;
-	
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "project")
 	private Set<Flat> flat;
 
 	private boolean active;

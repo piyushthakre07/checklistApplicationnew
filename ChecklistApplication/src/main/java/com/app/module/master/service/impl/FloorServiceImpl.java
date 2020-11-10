@@ -37,8 +37,8 @@ public class FloorServiceImpl implements IFloorService {
 	IFloorDao floorDao;
 
 	@Override
-	public ResponseBean insertOrUpdateFloor(FloorBean floorBean) throws CheckListAppException {
 		// floorValidation.checkDuplicateFloor(floorBean);
+	public ResponseBean insertOrUpdateFloor(FloorBean floorBean) throws CheckListAppException {
 		Floor floor = new Floor();
 		BeanUtils.copyProperties(floorBean, floor);
 		Project project = new Project();
@@ -67,7 +67,7 @@ public class FloorServiceImpl implements IFloorService {
 				project.setProjectId(floorRequestBean.getProjectId());
 				floor.setProject(project);
 				Building building = new Building();
-				building.setBuildingId(floorBean.getBuildingId());
+				building.setBuildingId(floorRequestBean.getBuildingId());
 				floor.setBuilding(building);
 				floorDao.save(floor);
 			});
