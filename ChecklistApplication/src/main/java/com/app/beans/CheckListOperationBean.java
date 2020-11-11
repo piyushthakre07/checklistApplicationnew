@@ -1,5 +1,7 @@
 package com.app.beans;
 
+import java.util.Date;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,4 +18,20 @@ public class CheckListOperationBean {
 	private Long flatTypeId;
 
 	private Long flatId;
+	
+	private Long ownerId;
+	
+	//private Long userId;
+	
+	private Long workTypeId;
+	
+	private Long taskId;
+	
+	private Long roomId;
+	
+	private boolean check;
+	
+	private boolean fault;
+	
+	private Date checkListDate;
 }
