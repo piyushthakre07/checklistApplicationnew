@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -60,5 +61,11 @@ public class AssignFlatToOwnerController {
 	public ResponseEntity<Object> getActiveAssignFlatToOwners() throws CheckListAppException {
 		ResponseBean responseBean = assignFlatToOwnerService.getAssignFlatToOwners();
 		return new ResponseEntity<Object>(responseBean, HttpStatus.OK);
+	}
+	
+	@GetMapping(value = "/getAssignFlatToOwnerByAssignFlatToOwnerId/{assignFlatToOwnerId}")
+	public ResponseEntity<Object> getAssignFlatToOwnerByAssignFlatToOwnerId(@PathVariable("assignFlatToOwnerId") Long assignFlatToOwnerId)
+			throws CheckListAppException {
+		return new ResponseEntity<Object>(assignFlatToOwnerService.getAssignFlatToOwnerByAssignFlatToOwnerId(assignFlatToOwnerId), HttpStatus.OK);
 	}
 }

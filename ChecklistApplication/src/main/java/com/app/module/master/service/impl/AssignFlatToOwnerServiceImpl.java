@@ -94,6 +94,19 @@ public class AssignFlatToOwnerServiceImpl implements IAssignFlatToOwnerService {
 					MessageConstant.QUERY_FETCH_EXCPTION);
 		}
 	}
+	
+	@Override
+	public ResponseBean getAssignFlatToOwnerByAssignFlatToOwnerId(Long assignFlatToOwnerId) throws CheckListAppException {
+		try {
+			return ResponseBean.builder()
+					.data(prepareAssignFlatToOwnerBeansFromAssignFlatToOwner(assignFlatToOwnerDao.getAssignFlatToOwnerByAssignFlatToOwnerId(assignFlatToOwnerId))).status(true)
+					.hasError(false).message(MessageConstant.SUCCESS_MESSAGE).build();
+		} catch (Exception e) {
+			throw new CheckListAppException(CheckListAppException.SERVER_ERROR, MessageConstant.SERVER_ERROR_MESSAGE,
+					MessageConstant.QUERY_FETCH_EXCPTION);
+		}
+	}
+	
 
 	private List<AssignFlatToOwnerResponseBean> prepareAssignFlatToOwnerBeansFromAssignFlatToOwner(
 			List<AssignFlatToOwner> allAssignFlatToOwners) {
@@ -122,4 +135,5 @@ public class AssignFlatToOwnerServiceImpl implements IAssignFlatToOwnerService {
 		});
 		return assignFlatToOwnerBeans;
 	}
+	
 }
