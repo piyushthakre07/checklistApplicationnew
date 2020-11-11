@@ -63,7 +63,7 @@ public class AssignFlatToOwnerController {
 		return new ResponseEntity<Object>(responseBean, HttpStatus.OK);
 	}
 	
-	@GetMapping(value = "/getAssignFlatToOwnerByAssignFlatToOwnerId/{assignFlatToOwnerId}")
+	@GetMapping(value = "/getAssignFlatToOwnerById/{assignFlatToOwnerId}")
 	public ResponseEntity<Object> getAssignFlatToOwnerByAssignFlatToOwnerId(@PathVariable("assignFlatToOwnerId") Long assignFlatToOwnerId)
 			throws CheckListAppException {
 		return new ResponseEntity<Object>(assignFlatToOwnerService.getAssignFlatToOwnerByAssignFlatToOwnerId(assignFlatToOwnerId), HttpStatus.OK);
