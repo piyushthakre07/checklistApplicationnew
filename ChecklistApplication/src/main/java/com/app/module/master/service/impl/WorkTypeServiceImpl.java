@@ -59,6 +59,18 @@ public class WorkTypeServiceImpl implements IWorkTypeService {
 		}
 	}
 
+	@Override
+	public ResponseBean getWorkTypeByWorkTypeId(Long workTypeId) throws CheckListAppException {
+		try {
+			return ResponseBean.builder()
+					.data(prepareWorkTypesBeanFromWorkTypes(workTypeDao.getWorkTypeByWorkTypeId(workTypeId)))
+					.status(true).hasError(false).message(MessageConstant.SUCCESS_MESSAGE).build();
+		} catch (Exception e) {
+			throw new CheckListAppException(CheckListAppException.SERVER_ERROR, MessageConstant.SERVER_ERROR_MESSAGE,
+					MessageConstant.QUERY_FETCH_EXCPTION);
+		}
+	}
+
 	private List<WorkTypeBean> prepareWorkTypesBeanFromWorkTypes(List<WorkType> allWorkTypes) {
 		List<WorkTypeBean> workTypeBeans = new ArrayList<WorkTypeBean>();
 		allWorkTypes.forEach(workType -> {

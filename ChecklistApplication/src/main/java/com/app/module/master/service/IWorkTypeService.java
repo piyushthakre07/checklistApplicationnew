@@ -11,4 +11,6 @@ public interface IWorkTypeService {
 	ResponseBean getActiveWorkTypes() throws CheckListAppException;
 
 	ResponseBean getWorkTypes() throws CheckListAppException;
+
+	ResponseBean getWorkTypeByWorkTypeId(Long workTypeId) throws CheckListAppException;
 }

@@ -11,4 +11,7 @@ public interface IWorkTypeDao extends JpaRepository<WorkType, Long> {
 
 	@Query("select workType from WorkType workType where active=true")
 	List<WorkType> getAllActiveWorkTypes();
+	
+	@Query("select workType from WorkType workType where workType.workTypeId=?1 ")
+	List<WorkType> getWorkTypeByWorkTypeId(Long workTypeId);
 }
