@@ -11,4 +11,7 @@ public interface IRoomDao extends JpaRepository<Room, Long> {
 
 	@Query("select room from Room room where active=true")
 	List<Room> getAllActiveRooms();
+	
+	@Query("select room from Room room where room.roomId=?1 ")
+	List<Room> getRoomByRoomId(Long roomId);
 }

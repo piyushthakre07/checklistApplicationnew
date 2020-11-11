@@ -15,5 +15,8 @@ public interface IOwnerDao extends JpaRepository<Owner, Long> {
 
 	@Query("select owner from Owner owner where active=true")
 	List<Owner> getAllActiveOwners();
+	
+	@Query("select owner from Owner owner where owner.ownerId=?1 ")
+	List<Owner> getOwnerByOwnerId(Long ownerId);
 }
 

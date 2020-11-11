@@ -11,4 +11,7 @@ public interface IFlatTypeDao extends JpaRepository<FlatType, Long> {
 
 	@Query("select flatType from FlatType flatType where active=true")
 	List<FlatType> getAllActiveFlatTypes();
+
+	@Query("select flatType from FlatType flatType where flatType.flatTypeId=?1 ")
+	List<FlatType> getFlatTypeByFlatTypeId(Long flatTypeId);
 }

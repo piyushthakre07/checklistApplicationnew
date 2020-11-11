@@ -11,4 +11,7 @@ public interface ITaskDao extends JpaRepository<Task, Long> {
 
 	@Query("select task from Task task where active=true")
 	List<Task> getAllActiveTasks();
+	
+	@Query("select task from Task task where task.taskId=?1 ")
+	List<Task> getTaskByTaskId(Long taskId);
 }

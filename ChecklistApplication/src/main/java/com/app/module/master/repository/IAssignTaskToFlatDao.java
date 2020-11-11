@@ -18,4 +18,7 @@ public interface IAssignTaskToFlatDao extends JpaRepository<AssignTaskToFlat, Lo
 
 	@Query("select assignTaskToFlat from AssignTaskToFlat assignTaskToFlat where assignTaskToFlat.flat.flatId=?1 and  assignTaskToFlat.workType.workTypeId=?2 and active=true ")
 	List<AssignTaskToFlat> getTaskByFlatIdAndWorktype(Long flatId, Long workTypeId);
+	
+	@Query("select assignTaskToFlat from AssignTaskToFlat assignTaskToFlat where assignTaskToFlat.assignTaskToFlatId=?1 ")
+	List<AssignTaskToFlat> getAssignTaskToFlatByAssignTaskToFlatId(Long assignTaskToFlatId);
 }

@@ -15,4 +15,7 @@ public interface IAssignFlatToOwnerDao extends JpaRepository<AssignFlatToOwner, 
 
 	@Query("select assignFlatToOwner from AssignFlatToOwner assignFlatToOwner where active=true")
 	List<AssignFlatToOwner> getActiveAssignFlatToOwners();
+	
+	@Query("select assignFlatToOwner from AssignFlatToOwner assignFlatToOwner where assignFlatToOwner.assignFlatToOwnerId=?1 ")
+	List<AssignFlatToOwner> getAssignFlatToOwnerByAssignFlatToOwnerId(Long assignFlatToOwnerId);
 }
