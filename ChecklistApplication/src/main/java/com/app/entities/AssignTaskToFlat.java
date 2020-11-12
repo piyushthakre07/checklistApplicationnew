@@ -24,7 +24,7 @@ public class AssignTaskToFlat extends AuditMaster {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "assign_task_to_flat_id")
-	private Long assignRoomToFlatId;
+	private Long assignTaskToFlatId;
 
 	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "project_id")

@@ -21,7 +21,7 @@ public class Contractor extends AuditMaster {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "Contractor_id")
-	private Long ContractorId;
+	private Long contractorId;
 
 	@Column(name = "Contractor_name", length = 30)
 	private String contractorName;
