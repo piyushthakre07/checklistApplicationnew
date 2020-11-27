@@ -1,5 +1,6 @@
 package com.app.entities;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -21,7 +22,12 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(name = "check_list_operation")
-public class CheckListOperation extends AuditMaster {
+public class CheckListOperation extends AuditMaster implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5105934255166289714L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -47,7 +53,7 @@ public class CheckListOperation extends AuditMaster {
 	@JoinColumn(name = "flat_id")
 	private Flat flat;
 	
-	@OneToOne(fetch = FetchType.EAGER)
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "owner_id",nullable = true)
 	private Owner owner;
 	
