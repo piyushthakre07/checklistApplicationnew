@@ -51,46 +51,74 @@ public class AssignTaskToFlatServiceImpl implements IAssignTaskToFlatService {
 	public ResponseBean insertOrUpdateAssignTaskToFlat(AssignTaskToFlatBean assignTaskToFlatBean)
 			throws CheckListAppException {
 		// assignTaskToFlatValidation.checkDuplicateAssignTaskToFlat(assignTaskToFlatBean);
-		AssignTaskToFlat assignTaskToFlat = new AssignTaskToFlat();
-		BeanUtils.copyProperties(assignTaskToFlatBean, assignTaskToFlat);
-		Project project = new Project();
-		project.setProjectId(assignTaskToFlatBean.getProjectId());
-		assignTaskToFlat.setProject(project);
-		Building building = new Building();
-		building.setBuildingId(assignTaskToFlatBean.getBuildingId());
-		assignTaskToFlat.setBuilding(building);
-
-		WorkType workType = new WorkType();
-		workType.setWorkTypeId(assignTaskToFlatBean.getWorkTypeId());
-		assignTaskToFlat.setWorkType(workType);
-
-		FlatType flatType = new FlatType();
-		flatType.setFlatTypeId(assignTaskToFlatBean.getFlatTypeId());
-		assignTaskToFlat.setFlatType(flatType);
+		List<AssignTaskToFlat> assignTaskToFlats=new ArrayList<AssignTaskToFlat>();
+		
 
 		List<TaskBean> taskBeans = assignTaskToFlatBean.getTasks();
 		if (assignTaskToFlatBean.getFlatId() != 0) {
-			Flat flat = new Flat();
-			flat.setFlatId(assignTaskToFlatBean.getFlatId());
-			assignTaskToFlat.setFlat(flat);
+			
 			taskBeans.forEach(taskBean -> {
+				AssignTaskToFlat assignTaskToFlat = new AssignTaskToFlat();
+				BeanUtils.copyProperties(assignTaskToFlatBean, assignTaskToFlat);
+				
+				Project project = new Project();
+				project.setProjectId(assignTaskToFlatBean.getProjectId());
+				assignTaskToFlat.setProject(project);
+				Building building = new Building();
+				building.setBuildingId(assignTaskToFlatBean.getBuildingId());
+				assignTaskToFlat.setBuilding(building);
+
+				WorkType workType = new WorkType();
+				workType.setWorkTypeId(assignTaskToFlatBean.getWorkTypeId());
+				assignTaskToFlat.setWorkType(workType);
+
+				FlatType flatType = new FlatType();
+				flatType.setFlatTypeId(assignTaskToFlatBean.getFlatTypeId());
+				assignTaskToFlat.setFlatType(flatType);
+				
+				Flat flat = new Flat();
+				flat.setFlatId(assignTaskToFlatBean.getFlatId());
+				assignTaskToFlat.setFlat(flat);
+				
 				Task task = new Task();
 				BeanUtils.copyProperties(taskBean, task);
 				assignTaskToFlat.setTask(task);
-				assignTaskToFlatDao.save(assignTaskToFlat);
+				assignTaskToFlats.add(assignTaskToFlat);
 			});
+			
 		} else {
 			List<Flat> flats = flatDao.getFlatByFlatTypeId(assignTaskToFlatBean.getFlatTypeId());
 			flats.stream().forEach(flat -> {
-				assignTaskToFlat.setFlat(flat);
+				
 				taskBeans.forEach(taskBean -> {
+					AssignTaskToFlat assignTaskToFlat = new AssignTaskToFlat();
+					BeanUtils.copyProperties(assignTaskToFlatBean, assignTaskToFlat);
+					
+					Project project = new Project();
+					project.setProjectId(assignTaskToFlatBean.getProjectId());
+					assignTaskToFlat.setProject(project);
+					Building building = new Building();
+					building.setBuildingId(assignTaskToFlatBean.getBuildingId());
+					assignTaskToFlat.setBuilding(building);
+
+					WorkType workType = new WorkType();
+					workType.setWorkTypeId(assignTaskToFlatBean.getWorkTypeId());
+					assignTaskToFlat.setWorkType(workType);
+
+					FlatType flatType = new FlatType();
+					flatType.setFlatTypeId(assignTaskToFlatBean.getFlatTypeId());
+					assignTaskToFlat.setFlatType(flatType);
+					
+					assignTaskToFlat.setFlat(flat);
+					
 					Task task = new Task();
 					BeanUtils.copyProperties(taskBean, task);
 					assignTaskToFlat.setTask(task);
-					assignTaskToFlatDao.save(assignTaskToFlat);
+					assignTaskToFlats.add(assignTaskToFlat);
 				});
 			});
 		}
+		assignTaskToFlatDao.saveAll(assignTaskToFlats);
 		return ResponseBean.builder().message(MessageConstant.DATA_SAVE_SUCCESS)
 				.messageDescription(MessageConstant.ASSIGN_TASK_TO_FLAT).status(true)
 				.satusCode(HttpStatus.CREATED.value()).hasError(false).build();
