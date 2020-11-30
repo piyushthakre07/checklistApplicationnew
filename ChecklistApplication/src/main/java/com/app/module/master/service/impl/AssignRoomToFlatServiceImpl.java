@@ -49,24 +49,30 @@ public class AssignRoomToFlatServiceImpl implements IAssignRoomToFlatService {
 	public ResponseBean insertOrUpdateAssignRoomToFlat(AssignRoomToFlatBean assignRoomToFlatBean)
 			throws CheckListAppException {
 		// assignRoomToFlatValidation.checkDuplicateAssignRoomToFlat(assignRoomToFlatBean);
-		AssignRoomToFlat assignRoomToFlat = new AssignRoomToFlat();
-		BeanUtils.copyProperties(assignRoomToFlatBean, assignRoomToFlat);
-		Project project = new Project();
-		project.setProjectId(assignRoomToFlatBean.getProjectId());
-		assignRoomToFlat.setProject(project);
-		Building building = new Building();
-		building.setBuildingId(assignRoomToFlatBean.getBuildingId());
-		assignRoomToFlat.setBuilding(building);
-
-		FlatType flatType = new FlatType();
-		flatType.setFlatTypeId(assignRoomToFlatBean.getFlatTypeId());
-		assignRoomToFlat.setFlatType(flatType);
+		
+		
 		List<RoomBean> rooms = assignRoomToFlatBean.getRooms();
 		if (assignRoomToFlatBean.getFlatId() != 0) {
-			Flat flat = new Flat();
-			flat.setFlatId(assignRoomToFlatBean.getFlatId());
-			assignRoomToFlat.setFlat(flat);
+			
 			rooms.forEach(roomBean -> {
+				
+				AssignRoomToFlat assignRoomToFlat = new AssignRoomToFlat();
+				BeanUtils.copyProperties(assignRoomToFlatBean, assignRoomToFlat);
+				Project project = new Project();
+				project.setProjectId(assignRoomToFlatBean.getProjectId());
+				assignRoomToFlat.setProject(project);
+				Building building = new Building();
+				building.setBuildingId(assignRoomToFlatBean.getBuildingId());
+				assignRoomToFlat.setBuilding(building);
+
+				FlatType flatType = new FlatType();
+				flatType.setFlatTypeId(assignRoomToFlatBean.getFlatTypeId());
+				assignRoomToFlat.setFlatType(flatType);
+				
+				Flat flat = new Flat();
+				flat.setFlatId(assignRoomToFlatBean.getFlatId());
+				assignRoomToFlat.setFlat(flat);
+				
 				Room room = new Room();
 				BeanUtils.copyProperties(roomBean, room);
 				assignRoomToFlat.setRoom(room);
@@ -75,8 +81,23 @@ public class AssignRoomToFlatServiceImpl implements IAssignRoomToFlatService {
 		} else {
 			List<Flat> flats = flatDao.getFlatByFlatTypeId(assignRoomToFlatBean.getFlatTypeId());
 			flats.stream().forEach(flat -> {
-				assignRoomToFlat.setFlat(flat);
+				
 				rooms.forEach(roomBean -> {
+					AssignRoomToFlat assignRoomToFlat = new AssignRoomToFlat();
+					BeanUtils.copyProperties(assignRoomToFlatBean, assignRoomToFlat);
+					Project project = new Project();
+					project.setProjectId(assignRoomToFlatBean.getProjectId());
+					assignRoomToFlat.setProject(project);
+					Building building = new Building();
+					building.setBuildingId(assignRoomToFlatBean.getBuildingId());
+					assignRoomToFlat.setBuilding(building);
+
+					FlatType flatType = new FlatType();
+					flatType.setFlatTypeId(assignRoomToFlatBean.getFlatTypeId());
+					assignRoomToFlat.setFlatType(flatType);
+					
+					assignRoomToFlat.setFlat(flat);
+					
 					Room room = new Room();
 					BeanUtils.copyProperties(roomBean, room);
 					assignRoomToFlat.setRoom(room);
