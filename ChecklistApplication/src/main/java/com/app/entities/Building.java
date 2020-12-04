@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import lombok.Getter;
@@ -35,15 +36,16 @@ public class Building extends AuditMaster{
 	@Column(name = "description", length = 200)
 	private String description;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "project_id")
 	private Project project;
-	
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "building")
-	private Set<Floor> floor;
-	
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "building")
-	private Set<Flat> flat;
+	/*
+	 * @OneToMany(fetch = FetchType.EAGER, mappedBy = "building") private Set<Floor>
+	 * floor;
+	 * 
+	 * @OneToMany(fetch = FetchType.EAGER, mappedBy = "building") private Set<Flat>
+	 * flat;
+	 */
 	
 	private boolean active;
 

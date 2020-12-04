@@ -19,4 +19,7 @@ public interface IAssignWorkToContractorDao extends JpaRepository<AssignWorkToCo
 	@Query("select assignWorkToContractor from AssignWorkToContractor assignWorkToContractor where assignWorkToContractor.assignWorkToContractorId=?1 ")
 	List<AssignWorkToContractor> getAssignWorkToContractorByAssignWorkToContractorId(Long assignWorkToContractorId);
 	
+	@Query("select assignWorkToContractor from AssignWorkToContractor assignWorkToContractor where assignWorkToContractor.flat.flatId=?1 and assignWorkToContractor.workType.workTypeId=?2")
+	List<AssignWorkToContractor> getAssignWorkToContractorByFlatIdNWorkType(Long flatId,Long workTypeId);
+	
 }

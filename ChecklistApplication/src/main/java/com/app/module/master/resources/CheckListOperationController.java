@@ -59,5 +59,13 @@ public class CheckListOperationController {
 			throws CheckListAppException {
 		return new ResponseEntity<Object>(checkListOperationService.getCheckListOperationByCheckListOperationId(checkListOperationId), HttpStatus.OK);
 	}
+	
+	
+	@ApiOperation(value = "CheckListOperation Report", response = ResponseEntity.class)
+	@PostMapping(value = "/getCheckListOperationReport", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> getCheckListOperationReport(@RequestBody CheckListOperationBean checkListOperationBean)
+			throws CheckListAppException {
+		return new ResponseEntity<Object>(checkListOperationService.getCheckListOperationReport(checkListOperationBean), HttpStatus.OK);
+	}
 
 }

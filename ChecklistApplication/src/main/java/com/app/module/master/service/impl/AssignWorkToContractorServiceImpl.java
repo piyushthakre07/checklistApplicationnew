@@ -101,6 +101,19 @@ public class AssignWorkToContractorServiceImpl implements IAssignWorkToContracto
 					MessageConstant.QUERY_FETCH_EXCPTION);
 		}
 	}
+	
+	@Override
+	public List<AssignWorkToContractorResponseBean> getAssignWorkToContractorByFlatIdNWorkType(Long flatId, Long workTypeId) throws CheckListAppException {
+		try {
+			return prepareAssignWorkToContractorBeansFromAssignWorkToContractor(
+							assignWorkToContractorDao.getAssignWorkToContractorByFlatIdNWorkType(flatId, workTypeId));
+		} catch (Exception e) {
+			throw new CheckListAppException(CheckListAppException.SERVER_ERROR, MessageConstant.SERVER_ERROR_MESSAGE,
+					MessageConstant.QUERY_FETCH_EXCPTION);
+		}
+	}
+	
+	
 
 	private List<AssignWorkToContractorResponseBean> prepareAssignWorkToContractorBeansFromAssignWorkToContractor(
 			List<AssignWorkToContractor> allAssignWorkToContractors) {

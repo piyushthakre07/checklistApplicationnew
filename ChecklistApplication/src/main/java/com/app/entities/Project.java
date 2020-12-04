@@ -35,12 +35,14 @@ public class Project extends AuditMaster {
 
 	@Column(name = "description", length = 200)
 	private String description;
-
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "project")
-	private Set<Building> buildings;
-	
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "project")
-	private Set<Flat> flat;
+	/*
+	 * @OneToMany(fetch = FetchType.EAGER, mappedBy = "project") private
+	 * Set<Building> buildings;
+	 */
+	/*
+	 * @OneToMany(fetch = FetchType.EAGER, mappedBy = "project") private Set<Flat>
+	 * flat;
+	 */
 
 	private boolean active;
 

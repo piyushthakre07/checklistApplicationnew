@@ -1,34 +1,35 @@
 package com.app.beans;
 
 import java.util.Date;
-import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Setter
 @Getter
-public class CheckListOperationBean {
+public class CheckListOperationResponseBean {
 
 	private Long checkListOperationBeanId;
 	
-	private Long projectId;
+	private ProjectBean project;
 
-	private Long buildingId;
+	private BuildingBean building;
 	
-	private Long flatTypeId;
+	private FlatTypeBean flatType;
 
-	private Long flatId;
+	private FlatBean flat;
 	
-	private Long ownerId;
+	private OwnerBean owner;
 	
 	//private Long userId;
 	
-	private Long workTypeId;
+	private WorkTypeBean workType;
 	
-	private Long taskId;
+	private TaskBean task;
 	
-	private List<Long> roomIds;
+	private RoomBean room;
+	
+	private ContractorBean contractor;
 	
 	private boolean check;
 	

@@ -24,9 +24,6 @@ import lombok.Setter;
 @Table(name = "check_list_operation")
 public class CheckListOperation extends AuditMaster implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 5105934255166289714L;
 
 	@Id
@@ -72,8 +69,14 @@ public class CheckListOperation extends AuditMaster implements Serializable {
 	@Column(name = "is_check")
 	private boolean check;
 	
+	@Column(name = "is_owner")
+	private boolean is_owner;
+	
 	@Column(name = "is_fault")
 	private boolean fault;
+	
+	@Column(name = "is_user")
+	private boolean is_user;
 
 
 }

@@ -13,4 +13,7 @@ public interface ICheckListOperationService {
 
 	ResponseBean getCheckListOperationByCheckListOperationId(Long checkListOperationId) throws CheckListAppException;
 
+	ResponseBean getCheckListOperationReport(CheckListOperationBean checkListOperationBean)
+			throws CheckListAppException;
+
 }
