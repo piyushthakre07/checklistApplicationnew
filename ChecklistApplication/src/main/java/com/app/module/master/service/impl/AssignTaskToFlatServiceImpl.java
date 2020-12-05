@@ -162,6 +162,18 @@ public class AssignTaskToFlatServiceImpl implements IAssignTaskToFlatService {
 		}
 	}
 
+	@Override
+	public ResponseBean getAssignTaskToFlatById(Long assignTaskToFlatId) throws CheckListAppException {
+		try {
+			return ResponseBean.builder()
+					.data(prepareAssignTaskToFlatBeansFromAssignTaskToFlat(assignTaskToFlatDao.getAssignTaskToFlatByAssignTaskToFlatId(assignTaskToFlatId))).status(true)
+					.hasError(false).message(MessageConstant.SUCCESS_MESSAGE).build();
+		} catch (Exception e) {
+			throw new CheckListAppException(CheckListAppException.SERVER_ERROR, MessageConstant.SERVER_ERROR_MESSAGE,
+					MessageConstant.QUERY_FETCH_EXCPTION);
+		}
+	}
+	
 	private List<AssignTaskToFlatResponseBean> prepareAssignTaskToFlatBeansFromAssignTaskToFlat(
 			List<AssignTaskToFlat> allAssignTaskToFlats) {
 		List<AssignTaskToFlatResponseBean> assignTaskToFlatBeans = new ArrayList<AssignTaskToFlatResponseBean>();

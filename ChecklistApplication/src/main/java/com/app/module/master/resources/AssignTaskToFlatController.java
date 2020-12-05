@@ -68,4 +68,10 @@ public class AssignTaskToFlatController {
 		ResponseBean responseBean = assignTaskToFlatService.getAssignTaskToFlats();
 		return new ResponseEntity<Object>(responseBean, HttpStatus.OK);
 	}
+	
+	@GetMapping(value = "/getAssignTaskToFlatById/{assignTaskToFlatId}")
+	public ResponseEntity<Object> getAssignTaskToFlatById(@PathVariable("assignTaskToFlatId") Long assignTaskToFlatId)
+			throws CheckListAppException {
+		return new ResponseEntity<Object>(assignTaskToFlatService.getAssignTaskToFlatById(assignTaskToFlatId), HttpStatus.OK);
+	}
 }
