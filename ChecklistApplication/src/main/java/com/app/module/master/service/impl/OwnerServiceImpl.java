@@ -73,6 +73,7 @@ public class OwnerServiceImpl implements IOwnerService {
 					MessageConstant.QUERY_FETCH_EXCPTION);
 		}
 	}
+		
 
 	private List<OwnerBean> prepareOwnersBeanFromOwners(List<Owner> allOwners) {
 		List<OwnerBean> ownerBeans = new ArrayList<OwnerBean>();

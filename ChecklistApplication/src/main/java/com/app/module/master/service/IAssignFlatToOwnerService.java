@@ -14,4 +14,6 @@ public interface IAssignFlatToOwnerService {
 
 	ResponseBean getAssignFlatToOwnerByAssignFlatToOwnerId(Long assignFlatToOwnerId) throws CheckListAppException;
 
+	ResponseBean getOwnersByFlatId(Long flatId) throws CheckListAppException;
+
 }

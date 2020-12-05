@@ -107,7 +107,17 @@ public class AssignFlatToOwnerServiceImpl implements IAssignFlatToOwnerService {
 		}
 	}
 	
-
+	@Override
+	public ResponseBean getOwnersByFlatId(Long flatId) throws CheckListAppException {
+		try {
+			return ResponseBean.builder().data(assignFlatToOwnerDao.getOwnersByFlatId(flatId))
+					.status(true).hasError(false).message(MessageConstant.SUCCESS_MESSAGE).build();
+		} catch (Exception e) {
+			throw new CheckListAppException(CheckListAppException.SERVER_ERROR, MessageConstant.SERVER_ERROR_MESSAGE,
+					MessageConstant.QUERY_FETCH_EXCPTION);
+		}
+	}
+	
 	private List<AssignFlatToOwnerResponseBean> prepareAssignFlatToOwnerBeansFromAssignFlatToOwner(
 			List<AssignFlatToOwner> allAssignFlatToOwners) {
 		List<AssignFlatToOwnerResponseBean> assignFlatToOwnerBeans = new ArrayList<AssignFlatToOwnerResponseBean>();

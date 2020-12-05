@@ -68,4 +68,10 @@ public class AssignFlatToOwnerController {
 			throws CheckListAppException {
 		return new ResponseEntity<Object>(assignFlatToOwnerService.getAssignFlatToOwnerByAssignFlatToOwnerId(assignFlatToOwnerId), HttpStatus.OK);
 	}
+	
+	@GetMapping(value = "/getOwnersByFlatId/{flatId}")
+	public ResponseEntity<Object> getOwnersByFlatId(@PathVariable("flatId") Long flatId)
+			throws CheckListAppException {
+		return new ResponseEntity<Object>(assignFlatToOwnerService.getOwnersByFlatId(flatId), HttpStatus.OK);
+	}
 }
