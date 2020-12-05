@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -62,5 +63,11 @@ public class AssignWorkToContractorController {
 	public ResponseEntity<Object> getActiveAssignWorkToContractors() throws CheckListAppException {
 		ResponseBean responseBean = assignWorkToContractorService.getAssignWorkToContractors();
 		return new ResponseEntity<Object>(responseBean, HttpStatus.OK);
+	}
+	
+	@GetMapping(value = "/getAssignWorkToContractorById/{assignWorkToContractorId}")
+	public ResponseEntity<Object> getAssignWorkToContractorById(@PathVariable("assignWorkToContractorId") Long assignWorkToContractorId)
+			throws CheckListAppException {
+		return new ResponseEntity<Object>(assignWorkToContractorService.getAssignWorkToContractorById(assignWorkToContractorId), HttpStatus.OK);
 	}
 }

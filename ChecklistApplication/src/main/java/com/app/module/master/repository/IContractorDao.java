@@ -14,5 +14,6 @@ public interface IContractorDao extends JpaRepository<Contractor, Long>{
 	
 	@Query("select contractor from Contractor contractor where contractor.contractorId=?1 ")
 	List<Contractor> getContractorByContractorId(Long contractorId);
+
 	
 }

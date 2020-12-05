@@ -59,7 +59,19 @@ public class ContractorServiceImpl implements IContractorService {
 					MessageConstant.QUERY_FETCH_EXCPTION);
 		}
 	}
-
+	
+	@Override
+	public ResponseBean getContractorsById(Long contractorId) throws CheckListAppException {
+		try {
+			return ResponseBean.builder()
+					.data(contractorDao.getContractorByContractorId(contractorId)).status(true)
+					.hasError(false).message(MessageConstant.SUCCESS_MESSAGE).build();
+		} catch (Exception e) {
+			throw new CheckListAppException(CheckListAppException.SERVER_ERROR, MessageConstant.SERVER_ERROR_MESSAGE,
+					MessageConstant.QUERY_FETCH_EXCPTION);
+		}
+	}
+	
 	private List<ContractorBean> prepareContractorsBeanFromContractors(List<Contractor> allContractors) {
 		List<ContractorBean> contractorBeans = new ArrayList<ContractorBean>();
 		allContractors.forEach(contractor -> {

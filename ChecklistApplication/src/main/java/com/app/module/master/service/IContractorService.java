@@ -11,4 +11,6 @@ public interface IContractorService {
 	ResponseBean getActiveContractors() throws CheckListAppException;
 
 	ResponseBean getContractors() throws CheckListAppException;
+
+	ResponseBean getContractorsById(Long contractorId) throws CheckListAppException;
 }

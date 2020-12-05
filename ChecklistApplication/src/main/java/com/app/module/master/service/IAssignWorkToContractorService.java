@@ -18,4 +18,6 @@ public interface IAssignWorkToContractorService {
 	List<AssignWorkToContractorResponseBean> getAssignWorkToContractorByFlatIdNWorkType(Long flatId, Long workTypeId)
 			throws CheckListAppException;
 
+	ResponseBean getAssignWorkToContractorById(Long assignWorkToContractorId) throws CheckListAppException;
+
 }
