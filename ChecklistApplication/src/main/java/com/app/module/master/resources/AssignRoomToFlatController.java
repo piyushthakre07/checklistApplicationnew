@@ -69,5 +69,11 @@ public class AssignRoomToFlatController {
 		return new ResponseEntity<Object>(responseBean, HttpStatus.OK);
 	}
 	
+	@GetMapping(value = "/getAssignRoomToFlatById/{assignRoomToFlatId}")
+	public ResponseEntity<Object> getAssignRoomToFlatById(@PathVariable("assignRoomToFlatId") Long assignRoomToFlatId)
+			throws CheckListAppException {
+		return new ResponseEntity<Object>(assignRoomToFlatService.getAssignRoomToFlatById(assignRoomToFlatId), HttpStatus.OK);
+	}
+	
 	
 }

@@ -147,6 +147,18 @@ public class AssignRoomToFlatServiceImpl implements IAssignRoomToFlatService {
 					MessageConstant.QUERY_FETCH_EXCPTION);
 		}
 	}
+	
+	@Override
+	public ResponseBean getAssignRoomToFlatById(Long assignRoomToFlatId) throws CheckListAppException {
+		try {
+			return ResponseBean.builder()
+					.data(prepareAssignRoomToFlatBeansFromAssignRoomToFlat(assignRoomToFlatDao.getAssignRoomToFlatByAssignRoomToFlatId(assignRoomToFlatId))).status(true)
+					.hasError(false).message(MessageConstant.SUCCESS_MESSAGE).build();
+		} catch (Exception e) {
+			throw new CheckListAppException(CheckListAppException.SERVER_ERROR, MessageConstant.SERVER_ERROR_MESSAGE,
+					MessageConstant.QUERY_FETCH_EXCPTION);
+		}
+	}
 
 	private List<AssignRoomToFlatResponseBean> prepareAssignRoomToFlatBeansFromAssignRoomToFlat(
 			List<AssignRoomToFlat> allAssignRoomToFlats) {

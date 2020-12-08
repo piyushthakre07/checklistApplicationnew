@@ -22,7 +22,7 @@ public class CheckListOperationResponseBean {
 	private OwnerBean owner;
 	
 	//private Long userId;
-	
+		
 	private WorkTypeBean workType;
 	
 	private TaskBean task;
