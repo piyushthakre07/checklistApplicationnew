@@ -8,14 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import com.app.beans.AssignFlatToOwnerResponseBean;
 import com.app.beans.AssignWorkToContractorResponseBean;
 import com.app.beans.BuildingBean;
 import com.app.beans.CheckListOperationBean;
 import com.app.beans.CheckListOperationResponseBean;
+import com.app.beans.CheckListOperationTaskResponseBean;
 import com.app.beans.FlatBean;
 import com.app.beans.FlatTypeBean;
-import com.app.beans.FloorBean;
 import com.app.beans.OwnerBean;
 import com.app.beans.ProjectBean;
 import com.app.beans.ResponseBean;
@@ -25,6 +24,7 @@ import com.app.beans.WorkTypeBean;
 import com.app.constant.MessageConstant;
 import com.app.entities.Building;
 import com.app.entities.CheckListOperation;
+import com.app.entities.CheckListOperationTaskDetails;
 import com.app.entities.Flat;
 import com.app.entities.FlatType;
 import com.app.entities.Owner;
@@ -34,6 +34,8 @@ import com.app.entities.Task;
 import com.app.entities.WorkType;
 import com.app.exception.CheckListAppException;
 import com.app.module.master.repository.ICheckListOperationDao;
+import com.app.module.master.repository.ICheckListOperationTaskDetailsDao;
+import com.app.module.master.repository.IFlatDao;
 import com.app.module.master.service.IAssignWorkToContractorService;
 import com.app.module.master.service.ICheckListOperationService;
 
@@ -47,7 +49,13 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 
 	@Autowired
 	ICheckListOperationDao checkListOperationDao;
-	
+
+	@Autowired
+	IFlatDao flatDao;
+
+	@Autowired
+	ICheckListOperationTaskDetailsDao checkListOperationTaskDetailsDao;
+
 	@Autowired
 	IAssignWorkToContractorService assignWorkToContractorService;
 
@@ -55,42 +63,59 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 	public ResponseBean insertOrUpdateCheckListOperation(CheckListOperationBean checkListOperationBean)
 			throws CheckListAppException {
 
-		checkListOperationBean.getRoomIds().stream().forEach(roomid -> {
+		checkListOperationBean.getTaskDetails().stream().forEach(taskDetail -> {
+			List<CheckListOperation> checkListOperationList = checkListOperationDao.getCheckListOperationReport(
+					checkListOperationBean.getProjectId(), checkListOperationBean.getBuildingId(),
+					checkListOperationBean.getFlatId(), checkListOperationBean.getWorkTypeId());
 			CheckListOperation checkListOperation = new CheckListOperation();
-			BeanUtils.copyProperties(checkListOperationBean, checkListOperation);
+			if (checkListOperationList == null || checkListOperationList.isEmpty()) {
 
-			Project project = new Project();
-			project.setProjectId(checkListOperationBean.getProjectId());
-			checkListOperation.setProject(project);
+				BeanUtils.copyProperties(checkListOperationBean, checkListOperation);
 
-			Building building = new Building();
-			building.setBuildingId(checkListOperationBean.getBuildingId());
-			checkListOperation.setBuilding(building);
+				Project project = new Project();
+				project.setProjectId(checkListOperationBean.getProjectId());
+				checkListOperation.setProject(project);
 
-			WorkType workType = new WorkType();
-			workType.setWorkTypeId(checkListOperationBean.getWorkTypeId());
-			checkListOperation.setWorkType(workType);
+				Building building = new Building();
+				building.setBuildingId(checkListOperationBean.getBuildingId());
+				checkListOperation.setBuilding(building);
 
-			Flat flat = new Flat();
-			flat.setFlatId(checkListOperationBean.getFlatId());
-			checkListOperation.setFlat(flat);
+				WorkType workType = new WorkType();
+				workType.setWorkTypeId(checkListOperationBean.getWorkTypeId());
+				checkListOperation.setWorkType(workType);
 
-			FlatType flatType = new FlatType();
-			flatType.setFlatTypeId(checkListOperationBean.getFlatTypeId());
-			checkListOperation.setFlatType(flatType);
+				Flat flat = (flatDao.getFlatByFlatId(checkListOperationBean.getFlatId())).get(0);
+				flat.setFlatId(checkListOperationBean.getFlatId());
+				checkListOperation.setFlat(flat);
 
-			if (checkListOperationBean.getOwnerId() != null) {
-				Owner owner = new Owner();
-				owner.setOwnerId(checkListOperationBean.getOwnerId());
-				checkListOperation.setOwner(owner);
+				FlatType flatType = new FlatType();
+				flatType.setFlatTypeId(flat.getFlatType().getFlatTypeId());
+				checkListOperation.setFlatType(flatType);
+
+				if (checkListOperationBean.getOwnerId() != null) {
+					Owner owner = new Owner();
+					owner.setOwnerId(checkListOperationBean.getOwnerId());
+					checkListOperation.setOwner(owner);
+				}
+
+				checkListOperationDao.save(checkListOperation);
+			} else {
+				checkListOperation = checkListOperationList.get(0);
 			}
+			CheckListOperationTaskDetails checkListOperationTaskDetails = new CheckListOperationTaskDetails();
+			BeanUtils.copyProperties(checkListOperationBean, checkListOperationTaskDetails);
+
 			Task task = new Task();
 			task.setTaskId(checkListOperationBean.getTaskId());
-			checkListOperation.setTask(task);
+			checkListOperationTaskDetails.setTask(task);
+
 			Room room = new Room();
-			room.setRoomId(roomid);
-			checkListOperation.setRoom(room);
-			checkListOperationDao.save(checkListOperation);
+			room.setRoomId(taskDetail.getRoomId());
+			checkListOperationTaskDetails.setRoom(room);
+
+			checkListOperationTaskDetails.setCheckListOperation(checkListOperation);
+			checkListOperationTaskDetailsDao.save(checkListOperationTaskDetails);
+
 		});
 
 		return ResponseBean.builder().message(MessageConstant.DATA_SAVE_SUCCESS)
@@ -123,9 +148,9 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 					MessageConstant.QUERY_FETCH_EXCPTION);
 		}
 	}
-	
+
 	@Override
-	public ResponseBean getCheckListOperationByFlatIdAndWorkTypeId(Long flatId,Long workTypeId)
+	public ResponseBean getCheckListOperationByFlatIdAndWorkTypeId(Long flatId, Long workTypeId)
 			throws CheckListAppException {
 		try {
 			return ResponseBean.builder()
@@ -143,9 +168,10 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 			throws CheckListAppException {
 		try {
 			return ResponseBean.builder()
-					.data(prepareCheckListOperationResponseBeanFromCheckListOperations(checkListOperationDao.getCheckListOperationReport(checkListOperationBean.getProjectId(),
-							checkListOperationBean.getBuildingId(), checkListOperationBean.getFlatId(),
-							checkListOperationBean.getWorkTypeId())))
+					.data(prepareCheckListOperationResponseBeanFromCheckListOperations(
+							checkListOperationDao.getCheckListOperationReport(checkListOperationBean.getProjectId(),
+									checkListOperationBean.getBuildingId(), checkListOperationBean.getFlatId(),
+									checkListOperationBean.getWorkTypeId())))
 					.status(true).hasError(false).message(MessageConstant.SUCCESS_MESSAGE).build();
 		} catch (Exception e) {
 			throw new CheckListAppException(CheckListAppException.SERVER_ERROR, MessageConstant.SERVER_ERROR_MESSAGE,
@@ -163,7 +189,7 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 		});
 		return checkListOperationBeans;
 	}
-	
+
 	private List<CheckListOperationResponseBean> prepareCheckListOperationResponseBeanFromCheckListOperations(
 			List<CheckListOperation> allCheckListOperations) throws CheckListAppException {
 		List<CheckListOperationResponseBean> checkListOperationBeans = new ArrayList<CheckListOperationResponseBean>();
@@ -189,30 +215,44 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 				checkListOperationBean.setOwner(ownerBean);
 			}
 
-			if(checkListOperation.getFlatType()!=null) {
-			FlatTypeBean flatType = new FlatTypeBean();
-			BeanUtils.copyProperties(checkListOperation.getFlatType(), flatType);
-			checkListOperationBean.setFlatType(flatType);
+			if (checkListOperation.getFlatType() != null) {
+				FlatTypeBean flatType = new FlatTypeBean();
+				BeanUtils.copyProperties(checkListOperation.getFlatType(), flatType);
+				checkListOperationBean.setFlatType(flatType);
 			}
 
 			WorkTypeBean workType = new WorkTypeBean();
 			BeanUtils.copyProperties(checkListOperation.getWorkType(), workType);
 			checkListOperationBean.setWorkType(workType);
 
-			TaskBean task = new TaskBean();
-			BeanUtils.copyProperties(checkListOperation.getTask(), task);
-			checkListOperationBean.setTask(task);
+			List<CheckListOperationTaskResponseBean> checkListOperationTaskResponseBeanList = new ArrayList<CheckListOperationTaskResponseBean>();
 
-			RoomBean room = new RoomBean();
-			BeanUtils.copyProperties(checkListOperation.getRoom(), room);
-			checkListOperationBean.setRoom(room);
+			checkListOperation.getCheckListOperationTaskDetails().stream().forEach(checkListOperationTaskDetails -> {
+				CheckListOperationTaskResponseBean checkListOperationTaskResponseBean = new CheckListOperationTaskResponseBean();
+				
+				BeanUtils.copyProperties(checkListOperationTaskDetails, checkListOperationTaskResponseBean);
+				
+				TaskBean task = new TaskBean();
+				BeanUtils.copyProperties(checkListOperationTaskDetails.getTask(), task);
+				checkListOperationTaskResponseBean.setTask(task);
+
+				RoomBean room = new RoomBean();
+				BeanUtils.copyProperties(checkListOperationTaskDetails.getRoom(), room);
+				checkListOperationTaskResponseBean.setRoom(room);
+
+				checkListOperationTaskResponseBeanList.add(checkListOperationTaskResponseBean);
+
+			});
+			checkListOperationBean.setCheckListOperationTaskResponseBeanList(checkListOperationTaskResponseBeanList);
 
 			try {
 				List<AssignWorkToContractorResponseBean> list = assignWorkToContractorService
 						.getAssignWorkToContractorByFlatIdNWorkType(checkListOperation.getFlat().getFlatId(),
 								checkListOperation.getWorkType().getWorkTypeId());
-				if (list != null && !list.isEmpty())
-					checkListOperationBean.setContractor(list.get(0).getContractor());
+				/*
+				 * if (list != null && !list.isEmpty())
+				 * checkListOperationBean.setContractor(list.get(0).getContractor());
+				 */
 			} catch (CheckListAppException e) {
 
 			}

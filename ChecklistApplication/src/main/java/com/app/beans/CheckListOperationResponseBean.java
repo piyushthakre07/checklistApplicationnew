@@ -1,6 +1,6 @@
 package com.app.beans;
 
-import java.util.Date;
+import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -25,19 +25,6 @@ public class CheckListOperationResponseBean {
 		
 	private WorkTypeBean workType;
 	
-	private TaskBean task;
+	private List<CheckListOperationTaskResponseBean> checkListOperationTaskResponseBeanList;
 	
-	private RoomBean room;
-	
-	private ContractorBean contractor;
-	
-	private boolean check;
-	
-	private boolean fault;
-	
-	private Date checkListDate;
-	
-	private boolean is_owner;
-	
-	private boolean is_user;
 }

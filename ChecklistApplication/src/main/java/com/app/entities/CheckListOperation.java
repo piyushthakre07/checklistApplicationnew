@@ -1,7 +1,7 @@
 package com.app.entities;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -30,9 +31,6 @@ public class CheckListOperation extends AuditMaster implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "check_list_operation_id")
 	private Long checkListOperationId;
-	
-	@Column(name = "check_list_date")
-	private Date checkListDate;
 
 	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "project_id")
@@ -50,33 +48,15 @@ public class CheckListOperation extends AuditMaster implements Serializable {
 	@JoinColumn(name = "flat_id")
 	private Flat flat;
 	
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "owner_id",nullable = true)
-	private Owner owner;
-	
 	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "work_type_id")
 	private WorkType workType;
 	
-	@OneToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "task_id")
-	private Task task;
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "owner_id",nullable = true)
+	private Owner owner;
 	
-	@OneToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "room_id")
-	private Room room;
-	
-	@Column(name = "is_check")
-	private boolean check;
-	
-	@Column(name = "is_owner")
-	private boolean is_owner;
-	
-	@Column(name = "is_fault")
-	private boolean fault;
-	
-	@Column(name = "is_user")
-	private boolean is_user;
-
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "checkListOperation")
+	private Set<CheckListOperationTaskDetails> checkListOperationTaskDetails;
 
 }
