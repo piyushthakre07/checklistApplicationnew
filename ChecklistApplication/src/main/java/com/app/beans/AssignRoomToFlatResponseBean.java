@@ -20,6 +20,8 @@ public class AssignRoomToFlatResponseBean {
 	private FlatBean flat;
 
 	private FlatTypeBean flatType;
+	
+	private RoomBean room;
 
 	private boolean active;
 

@@ -180,6 +180,11 @@ public class AssignRoomToFlatServiceImpl implements IAssignRoomToFlatService {
 			FlatBean flatBean = new FlatBean();
 			BeanUtils.copyProperties(assignRoomToFlat.getFlat(), flatBean);
 			assignRoomToFlatResponseBean.setFlat(flatBean);
+			
+			RoomBean roomBean=new RoomBean();
+			BeanUtils.copyProperties(assignRoomToFlat.getRoom(), roomBean);
+			assignRoomToFlatResponseBean.setRoom(roomBean);
+			
 			assignRoomToFlatBeans.add(assignRoomToFlatResponseBean);
 		});
 		return assignRoomToFlatBeans;
