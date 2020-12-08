@@ -123,6 +123,20 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 					MessageConstant.QUERY_FETCH_EXCPTION);
 		}
 	}
+	
+	@Override
+	public ResponseBean getCheckListOperationByFlatIdAndWorkTypeId(Long flatId,Long workTypeId)
+			throws CheckListAppException {
+		try {
+			return ResponseBean.builder()
+					.data(prepareCheckListOperationResponseBeanFromCheckListOperations(
+							checkListOperationDao.getCheckListOperationReport(null, null, flatId, workTypeId)))
+					.status(true).hasError(false).message(MessageConstant.SUCCESS_MESSAGE).build();
+		} catch (Exception e) {
+			throw new CheckListAppException(CheckListAppException.SERVER_ERROR, MessageConstant.SERVER_ERROR_MESSAGE,
+					MessageConstant.QUERY_FETCH_EXCPTION);
+		}
+	}
 
 	@Override
 	public ResponseBean getCheckListOperationReport(CheckListOperationBean checkListOperationBean)

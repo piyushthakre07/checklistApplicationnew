@@ -60,6 +60,12 @@ public class CheckListOperationController {
 		return new ResponseEntity<Object>(checkListOperationService.getCheckListOperationByCheckListOperationId(checkListOperationId), HttpStatus.OK);
 	}
 	
+	@GetMapping(value = "/getCheckListOperationByFlatIdAndWorkTypeId/{flatId}/{workTypeId}")
+	public ResponseEntity<Object> getCheckListOperationByFlatIdAndWorkTypeId(@PathVariable("flatId") Long flatId,@PathVariable("workTypeId") Long workTypeId)
+			throws CheckListAppException {
+		return new ResponseEntity<Object>(checkListOperationService.getCheckListOperationByFlatIdAndWorkTypeId(flatId,workTypeId), HttpStatus.OK);
+	}
+	
 	
 	@ApiOperation(value = "CheckListOperation Report", response = ResponseEntity.class)
 	@PostMapping(value = "/getCheckListOperationReport", produces = MediaType.APPLICATION_JSON_VALUE)
