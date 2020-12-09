@@ -18,20 +18,15 @@ public class CheckListOperationBean {
 
 	private Long flatId;
 
-	@ApiModelProperty(hidden = true) 
 	private Long ownerId;
 
 	private Long workTypeId;
 
-	@ApiModelProperty(hidden = true) 
 	private Long taskId;
 
-	@ApiModelProperty(hidden = true) 
 	List<CheckListOperationTaskDetailsBean> taskDetails;
-
-	@ApiModelProperty(hidden = true) 
+ 
 	private boolean is_owner;
 
-	@ApiModelProperty(hidden = true) 
 	private boolean is_user;
 }
