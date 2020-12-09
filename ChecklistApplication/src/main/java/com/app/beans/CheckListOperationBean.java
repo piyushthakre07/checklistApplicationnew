@@ -2,6 +2,7 @@ package com.app.beans;
 
 import java.util.List;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,15 +18,20 @@ public class CheckListOperationBean {
 
 	private Long flatId;
 
+	@ApiModelProperty(hidden = true) 
 	private Long ownerId;
 
 	private Long workTypeId;
 
+	@ApiModelProperty(hidden = true) 
 	private Long taskId;
 
+	@ApiModelProperty(hidden = true) 
 	List<CheckListOperationTaskDetailsBean> taskDetails;
 
+	@ApiModelProperty(hidden = true) 
 	private boolean is_owner;
 
+	@ApiModelProperty(hidden = true) 
 	private boolean is_user;
 }
