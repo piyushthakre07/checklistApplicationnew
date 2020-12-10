@@ -39,7 +39,7 @@ public class CheckListOperationDefectImageUpload extends AuditMaster implements 
 	@JoinColumn(name = "check_list_operation_task_details_id")
 	private CheckListOperationTaskDetails checkListOperationTaskDetails;
 
-	@Column(name = "picByte", length = 5000)
+	@Column(name = "picByte")
 	private byte[] picByte;
 
 	public Long getCheckListOperationDefectImageUploadId() {

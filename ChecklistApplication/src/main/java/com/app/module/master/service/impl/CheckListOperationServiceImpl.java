@@ -3,6 +3,7 @@ package com.app.module.master.service.impl;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
@@ -12,11 +13,11 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.app.beans.AssignWorkToContractorResponseBean;
 import com.app.beans.BuildingBean;
 import com.app.beans.CheckListOperationBean;
+import com.app.beans.CheckListOperationDefectRequestBean;
 import com.app.beans.CheckListOperationResponseBean;
 import com.app.beans.CheckListOperationTaskResponseBean;
 import com.app.beans.FlatBean;
@@ -64,7 +65,7 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 
 	@Autowired
 	ICheckListOperationTaskDetailsDao checkListOperationTaskDetailsDao;
-	
+
 	@Autowired
 	ICheckListOperationDefectImageUploadDao checkListOperationDefectImageUploadDao;
 
@@ -72,7 +73,7 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 	IAssignWorkToContractorService assignWorkToContractorService;
 
 	@Override
-	public ResponseBean insertOrUpdateCheckListOperation(CheckListOperationBean checkListOperationBean,MultipartFile file)
+	public ResponseBean insertOrUpdateCheckListOperation(CheckListOperationBean checkListOperationBean)
 			throws CheckListAppException {
 
 		checkListOperationBean.getTaskDetails().stream().forEach(taskDetail -> {
@@ -126,34 +127,90 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 			checkListOperationTaskDetails.setRoom(room);
 
 			checkListOperationTaskDetails.setCheckListOperation(checkListOperation);
+			checkListOperationTaskDetails.setFault(false);
 			checkListOperationTaskDetailsDao.save(checkListOperationTaskDetails);
-			
-			if(file!=null) {
-			CheckListOperationDefectImageUpload checkListOperationDefectImageUpload=new com.app.entities.CheckListOperationDefectImageUpload();
-			checkListOperationDefectImageUpload.setName(file.getOriginalFilename());
-			checkListOperationDefectImageUpload.setType(file.getContentType());
-			try {
-				checkListOperationDefectImageUpload.setPicByte(compressBytes(file.getBytes()));
-				checkListOperationDefectImageUploadDao.save(checkListOperationDefectImageUpload);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			checkListOperationDefectImageUpload.setCheckListOperationTaskDetails(checkListOperationTaskDetails);
-			
-			}
 		});
 
 		return ResponseBean.builder().message(MessageConstant.DATA_SAVE_SUCCESS)
 				.messageDescription(MessageConstant.PROJECT_SAVE_SUCCESS_MESSAGE).status(true)
 				.satusCode(HttpStatus.CREATED.value()).hasError(false).build();
 	}
-	
+
 	@Override
-	public ResponseBean insertOrUpdateCheckListOperationDefect(CheckListOperationBean checkListOperationBean,MultipartFile file)
-			throws CheckListAppException {
-	
-		insertOrUpdateCheckListOperation(checkListOperationBean,file);
-		
+	public ResponseBean insertOrUpdateCheckListOperationDefect(
+			CheckListOperationDefectRequestBean checkListOperationDefectRequestBean) throws CheckListAppException {
+
+		List<CheckListOperation> checkListOperationList = checkListOperationDao.getCheckListOperationReport(
+				checkListOperationDefectRequestBean.getProjectId(), checkListOperationDefectRequestBean.getBuildingId(),
+				checkListOperationDefectRequestBean.getFlatId(), checkListOperationDefectRequestBean.getWorkTypeId());
+		CheckListOperation checkListOperation = new CheckListOperation();
+		if (checkListOperationList == null || checkListOperationList.isEmpty()) {
+
+			BeanUtils.copyProperties(checkListOperationDefectRequestBean, checkListOperation);
+
+			Project project = new Project();
+			project.setProjectId(checkListOperationDefectRequestBean.getProjectId());
+			checkListOperation.setProject(project);
+
+			Building building = new Building();
+			building.setBuildingId(checkListOperationDefectRequestBean.getBuildingId());
+			checkListOperation.setBuilding(building);
+
+			WorkType workType = new WorkType();
+			workType.setWorkTypeId(checkListOperationDefectRequestBean.getWorkTypeId());
+			checkListOperation.setWorkType(workType);
+
+			Flat flat = (flatDao.getFlatByFlatId(checkListOperationDefectRequestBean.getFlatId())).get(0);
+			flat.setFlatId(checkListOperationDefectRequestBean.getFlatId());
+			checkListOperation.setFlat(flat);
+
+			FlatType flatType = new FlatType();
+			flatType.setFlatTypeId(flat.getFlatType().getFlatTypeId());
+			checkListOperation.setFlatType(flatType);
+
+			if (checkListOperationDefectRequestBean.getOwnerId() != null) {
+				Owner owner = new Owner();
+				owner.setOwnerId(checkListOperationDefectRequestBean.getOwnerId());
+				checkListOperation.setOwner(owner);
+			}
+
+			checkListOperationDao.save(checkListOperation);
+		} else {
+			checkListOperation = checkListOperationList.get(0);
+		}
+		CheckListOperationTaskDetails checkListOperationTaskDetails = new CheckListOperationTaskDetails();
+		BeanUtils.copyProperties(checkListOperationDefectRequestBean, checkListOperationTaskDetails);
+
+		Task task = new Task();
+		task.setTaskId(checkListOperationDefectRequestBean.getTaskId());
+		checkListOperationTaskDetails.setTask(task);
+
+		Room room = new Room();
+		room.setRoomId(checkListOperationDefectRequestBean.getRoomId());
+		checkListOperationTaskDetails.setRoom(room);
+
+		checkListOperationTaskDetails.setFault(true);
+
+		checkListOperationTaskDetails.setCheck(false);
+
+		checkListOperationTaskDetails.setCheckListOperation(checkListOperation);
+		checkListOperationTaskDetailsDao.save(checkListOperationTaskDetails);
+
+		if (checkListOperationDefectRequestBean.getUploadImages() != null) {
+			CheckListOperationDefectImageUpload checkListOperationDefectImageUpload = new CheckListOperationDefectImageUpload();
+
+			Arrays.asList(checkListOperationDefectRequestBean.getUploadImages()).stream().forEach(file -> {
+				checkListOperationDefectImageUpload.setName(file.getOriginalFilename());
+				checkListOperationDefectImageUpload.setType(file.getContentType());
+				try {
+					checkListOperationDefectImageUpload.setPicByte(compressBytes(file.getBytes()));
+					checkListOperationDefectImageUpload.setCheckListOperationTaskDetails(checkListOperationTaskDetails);
+					checkListOperationDefectImageUploadDao.save(checkListOperationDefectImageUpload);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			});
+		}
 
 		return ResponseBean.builder().message(MessageConstant.DATA_SAVE_SUCCESS)
 				.messageDescription(MessageConstant.PROJECT_SAVE_SUCCESS_MESSAGE).status(true)
@@ -187,11 +244,13 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 	}
 
 	@Override
-	public ResponseBean getCheckListOperationTaskDetailsByFlatIdAndAndWorTypeAndTaskId(Long flatId, Long workTypeId, Long taskId)
-			throws CheckListAppException {
+	public ResponseBean getCheckListOperationTaskDetailsByFlatIdAndAndWorTypeAndTaskId(Long flatId, Long workTypeId,
+			Long taskId) throws CheckListAppException {
 		try {
-			return ResponseBean.builder().data(prepareCheckListOperationResponseBeanFromCheckListOperations(checkListOperationTaskDetailsDao
-					.getCheckListOperationTaskDetailsByFlatIdAndAndWorTypeAndTaskId(flatId, workTypeId, taskId)))
+			return ResponseBean.builder()
+					.data(prepareCheckListOperationResponseBeanFromCheckListOperations(checkListOperationTaskDetailsDao
+							.getCheckListOperationTaskDetailsByFlatIdAndAndWorTypeAndTaskId(flatId, workTypeId,
+									taskId)))
 					.status(true).hasError(false).message(MessageConstant.SUCCESS_MESSAGE).build();
 		} catch (Exception e) {
 			throw new CheckListAppException(CheckListAppException.SERVER_ERROR, MessageConstant.SERVER_ERROR_MESSAGE,
@@ -245,10 +304,10 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 			BeanUtils.copyProperties(checkListOperation.getFlat(), flatBean);
 			checkListOperationBean.setFlat(flatBean);
 
-			FloorBean floorBean=new FloorBean();
+			FloorBean floorBean = new FloorBean();
 			BeanUtils.copyProperties(checkListOperation.getFlat().getFloor(), floorBean);
 			checkListOperationBean.setFloor(floorBean);
-			
+
 			if (checkListOperation.getOwner() != null) {
 				OwnerBean ownerBean = new OwnerBean();
 				BeanUtils.copyProperties(checkListOperation.getOwner(), ownerBean);

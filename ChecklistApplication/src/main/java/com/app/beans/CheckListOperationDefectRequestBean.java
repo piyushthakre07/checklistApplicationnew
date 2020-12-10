@@ -1,5 +1,6 @@
 package com.app.beans;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -9,7 +10,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class CheckListOperationBean {
+public class CheckListOperationDefectRequestBean {
 
 	private Long checkListOperationBeanId;
 
@@ -25,8 +26,14 @@ public class CheckListOperationBean {
 
 	private Long taskId;
 
-	List<CheckListOperationTaskDetailsBean> taskDetails;
-    
+	private Long roomId;
+	
+	private boolean fault;
+	
+	private Date checkListDate;
+	
+	private MultipartFile[] uploadImages;
+ 
 	private boolean is_owner;
 
 	private boolean is_user;

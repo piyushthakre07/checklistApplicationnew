@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.app.beans.CheckListOperationBean;
+import com.app.beans.CheckListOperationDefectRequestBean;
 import com.app.exception.CheckListAppException;
 import com.app.module.master.service.ICheckListOperationService;
 
@@ -40,7 +42,7 @@ public class CheckListOperationController {
 	@PostMapping(value = "/insertCheckListOperation", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> insertCheckListOperation(@Valid @RequestBody CheckListOperationBean checkListOperationBean)
 			throws CheckListAppException {
-		return new ResponseEntity<Object>(checkListOperationService.insertOrUpdateCheckListOperation(checkListOperationBean,null), HttpStatus.OK);
+		return new ResponseEntity<Object>(checkListOperationService.insertOrUpdateCheckListOperation(checkListOperationBean), HttpStatus.OK);
 	}
 	
 
@@ -49,7 +51,7 @@ public class CheckListOperationController {
 	@PutMapping(value = "/updateCheckListOperation", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> updateCheckListOperation(@Valid @RequestBody CheckListOperationBean checkListOperationBean)
 			throws CheckListAppException {
-		return new ResponseEntity<Object>(checkListOperationService.insertOrUpdateCheckListOperation(checkListOperationBean,null), HttpStatus.OK);
+		return new ResponseEntity<Object>(checkListOperationService.insertOrUpdateCheckListOperation(checkListOperationBean), HttpStatus.OK);
 	}
 
 
@@ -80,8 +82,8 @@ public class CheckListOperationController {
 
 	@ApiOperation(value = "defect checkListOperation after validation", response = ResponseEntity.class)
 	@PostMapping(value = "/defectInsertCheckListOperation")
-	public ResponseEntity<Object> defectInsertCheckListOperation(@RequestBody CheckListOperationBean checkListOperationBean,@RequestParam("imageFile") MultipartFile file)
+	public ResponseEntity<Object> defectInsertCheckListOperation(@ModelAttribute CheckListOperationDefectRequestBean checkListOperationDefectRequestBean)
 			throws CheckListAppException {
-		return new ResponseEntity<Object>(checkListOperationService.insertOrUpdateCheckListOperationDefect(checkListOperationBean, file), HttpStatus.OK);
+		return new ResponseEntity<Object>(checkListOperationService.insertOrUpdateCheckListOperationDefect(checkListOperationDefectRequestBean), HttpStatus.OK);
 	}
 }
