@@ -18,5 +18,6 @@ public interface ICheckListOperationDao extends JpaRepository<CheckListOperation
 			+ " and  (:workTypeId is null or checkListOperation.workType.workTypeId = :workTypeId) ")
 	List<CheckListOperation> getCheckListOperationReport(@Param("projectId") Long projectId,
 			@Param("buildingId") Long buildingId, @Param("flatId") Long flatId, @Param("workTypeId") Long workTypeId);
+	
 
 }

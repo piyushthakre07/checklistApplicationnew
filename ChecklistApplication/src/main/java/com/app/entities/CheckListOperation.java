@@ -58,5 +58,6 @@ public class CheckListOperation extends AuditMaster implements Serializable {
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "checkListOperation")
 	private Set<CheckListOperationTaskDetails> checkListOperationTaskDetails;
+	
 
 }

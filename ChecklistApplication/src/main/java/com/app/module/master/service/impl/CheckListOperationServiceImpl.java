@@ -1,12 +1,18 @@
 package com.app.module.master.service.impl;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.DataFormatException;
+import java.util.zip.Deflater;
+import java.util.zip.Inflater;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.app.beans.AssignWorkToContractorResponseBean;
 import com.app.beans.BuildingBean;
@@ -15,6 +21,7 @@ import com.app.beans.CheckListOperationResponseBean;
 import com.app.beans.CheckListOperationTaskResponseBean;
 import com.app.beans.FlatBean;
 import com.app.beans.FlatTypeBean;
+import com.app.beans.FloorBean;
 import com.app.beans.OwnerBean;
 import com.app.beans.ProjectBean;
 import com.app.beans.ResponseBean;
@@ -24,6 +31,7 @@ import com.app.beans.WorkTypeBean;
 import com.app.constant.MessageConstant;
 import com.app.entities.Building;
 import com.app.entities.CheckListOperation;
+import com.app.entities.CheckListOperationDefectImageUpload;
 import com.app.entities.CheckListOperationTaskDetails;
 import com.app.entities.Flat;
 import com.app.entities.FlatType;
@@ -34,6 +42,7 @@ import com.app.entities.Task;
 import com.app.entities.WorkType;
 import com.app.exception.CheckListAppException;
 import com.app.module.master.repository.ICheckListOperationDao;
+import com.app.module.master.repository.ICheckListOperationDefectImageUploadDao;
 import com.app.module.master.repository.ICheckListOperationTaskDetailsDao;
 import com.app.module.master.repository.IFlatDao;
 import com.app.module.master.service.IAssignWorkToContractorService;
@@ -55,12 +64,15 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 
 	@Autowired
 	ICheckListOperationTaskDetailsDao checkListOperationTaskDetailsDao;
+	
+	@Autowired
+	ICheckListOperationDefectImageUploadDao checkListOperationDefectImageUploadDao;
 
 	@Autowired
 	IAssignWorkToContractorService assignWorkToContractorService;
 
 	@Override
-	public ResponseBean insertOrUpdateCheckListOperation(CheckListOperationBean checkListOperationBean)
+	public ResponseBean insertOrUpdateCheckListOperation(CheckListOperationBean checkListOperationBean,MultipartFile file)
 			throws CheckListAppException {
 
 		checkListOperationBean.getTaskDetails().stream().forEach(taskDetail -> {
@@ -115,8 +127,33 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 
 			checkListOperationTaskDetails.setCheckListOperation(checkListOperation);
 			checkListOperationTaskDetailsDao.save(checkListOperationTaskDetails);
-
+			
+			if(file!=null) {
+			CheckListOperationDefectImageUpload checkListOperationDefectImageUpload=new com.app.entities.CheckListOperationDefectImageUpload();
+			checkListOperationDefectImageUpload.setName(file.getOriginalFilename());
+			checkListOperationDefectImageUpload.setType(file.getContentType());
+			try {
+				checkListOperationDefectImageUpload.setPicByte(compressBytes(file.getBytes()));
+				checkListOperationDefectImageUploadDao.save(checkListOperationDefectImageUpload);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			checkListOperationDefectImageUpload.setCheckListOperationTaskDetails(checkListOperationTaskDetails);
+			
+			}
 		});
+
+		return ResponseBean.builder().message(MessageConstant.DATA_SAVE_SUCCESS)
+				.messageDescription(MessageConstant.PROJECT_SAVE_SUCCESS_MESSAGE).status(true)
+				.satusCode(HttpStatus.CREATED.value()).hasError(false).build();
+	}
+	
+	@Override
+	public ResponseBean insertOrUpdateCheckListOperationDefect(CheckListOperationBean checkListOperationBean,MultipartFile file)
+			throws CheckListAppException {
+	
+		insertOrUpdateCheckListOperation(checkListOperationBean,file);
+		
 
 		return ResponseBean.builder().message(MessageConstant.DATA_SAVE_SUCCESS)
 				.messageDescription(MessageConstant.PROJECT_SAVE_SUCCESS_MESSAGE).status(true)
@@ -150,12 +187,11 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 	}
 
 	@Override
-	public ResponseBean getCheckListOperationByFlatIdAndWorkTypeId(Long flatId, Long workTypeId)
+	public ResponseBean getCheckListOperationTaskDetailsByFlatIdAndAndWorTypeAndTaskId(Long flatId, Long workTypeId, Long taskId)
 			throws CheckListAppException {
 		try {
-			return ResponseBean.builder()
-					.data(prepareCheckListOperationResponseBeanFromCheckListOperations(
-							checkListOperationDao.getCheckListOperationReport(null, null, flatId, workTypeId)))
+			return ResponseBean.builder().data(prepareCheckListOperationResponseBeanFromCheckListOperations(checkListOperationTaskDetailsDao
+					.getCheckListOperationTaskDetailsByFlatIdAndAndWorTypeAndTaskId(flatId, workTypeId, taskId)))
 					.status(true).hasError(false).message(MessageConstant.SUCCESS_MESSAGE).build();
 		} catch (Exception e) {
 			throw new CheckListAppException(CheckListAppException.SERVER_ERROR, MessageConstant.SERVER_ERROR_MESSAGE,
@@ -209,6 +245,10 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 			BeanUtils.copyProperties(checkListOperation.getFlat(), flatBean);
 			checkListOperationBean.setFlat(flatBean);
 
+			FloorBean floorBean=new FloorBean();
+			BeanUtils.copyProperties(checkListOperation.getFlat().getFloor(), floorBean);
+			checkListOperationBean.setFloor(floorBean);
+			
 			if (checkListOperation.getOwner() != null) {
 				OwnerBean ownerBean = new OwnerBean();
 				BeanUtils.copyProperties(checkListOperation.getOwner(), ownerBean);
@@ -229,9 +269,9 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 
 			checkListOperation.getCheckListOperationTaskDetails().stream().forEach(checkListOperationTaskDetails -> {
 				CheckListOperationTaskResponseBean checkListOperationTaskResponseBean = new CheckListOperationTaskResponseBean();
-				
+
 				BeanUtils.copyProperties(checkListOperationTaskDetails, checkListOperationTaskResponseBean);
-				
+
 				TaskBean task = new TaskBean();
 				BeanUtils.copyProperties(checkListOperationTaskDetails.getTask(), task);
 				checkListOperationTaskResponseBean.setTask(task);
@@ -240,24 +280,92 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 				BeanUtils.copyProperties(checkListOperationTaskDetails.getRoom(), room);
 				checkListOperationTaskResponseBean.setRoom(room);
 
+				try {
+					List<AssignWorkToContractorResponseBean> list = assignWorkToContractorService
+							.getAssignWorkToContractorByFlatIdNWorkType(checkListOperation.getFlat().getFlatId(),
+									checkListOperation.getWorkType().getWorkTypeId());
+
+					if (list != null && !list.isEmpty())
+						checkListOperationTaskResponseBean.setContractor(list.get(0).getContractor());
+
+				} catch (CheckListAppException e) {
+
+				}
 				checkListOperationTaskResponseBeanList.add(checkListOperationTaskResponseBean);
 
 			});
 			checkListOperationBean.setCheckListOperationTaskResponseBeanList(checkListOperationTaskResponseBeanList);
 
-			try {
-				List<AssignWorkToContractorResponseBean> list = assignWorkToContractorService
-						.getAssignWorkToContractorByFlatIdNWorkType(checkListOperation.getFlat().getFlatId(),
-								checkListOperation.getWorkType().getWorkTypeId());
-				/*
-				 * if (list != null && !list.isEmpty())
-				 * checkListOperationBean.setContractor(list.get(0).getContractor());
-				 */
-			} catch (CheckListAppException e) {
-
-			}
 			checkListOperationBeans.add(checkListOperationBean);
 		});
 		return checkListOperationBeans;
+	}
+
+	public static byte[] compressBytes(byte[] data) {
+
+		Deflater deflater = new Deflater();
+
+		deflater.setInput(data);
+
+		deflater.finish();
+
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);
+
+		byte[] buffer = new byte[1024];
+
+		while (!deflater.finished()) {
+
+			int count = deflater.deflate(buffer);
+
+			outputStream.write(buffer, 0, count);
+
+		}
+
+		try {
+
+			outputStream.close();
+
+		} catch (IOException e) {
+
+		}
+
+		System.out.println("Compressed Image Byte Size - " + outputStream.toByteArray().length);
+
+		return outputStream.toByteArray();
+
+	}
+
+	// uncompress the image bytes before returning it to the angular application
+
+	public static byte[] decompressBytes(byte[] data) {
+
+		Inflater inflater = new Inflater();
+
+		inflater.setInput(data);
+
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);
+
+		byte[] buffer = new byte[1024];
+
+		try {
+
+			while (!inflater.finished()) {
+
+				int count = inflater.inflate(buffer);
+
+				outputStream.write(buffer, 0, count);
+
+			}
+
+			outputStream.close();
+
+		} catch (IOException ioe) {
+
+		} catch (DataFormatException e) {
+
+		}
+
+		return outputStream.toByteArray();
+
 	}
 }

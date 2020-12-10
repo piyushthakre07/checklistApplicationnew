@@ -21,6 +21,7 @@ public class CheckListOperationResponseBean {
 	
 	private OwnerBean owner;
 	
+	private FloorBean floor;
 	//private Long userId;
 		
 	private WorkTypeBean workType;

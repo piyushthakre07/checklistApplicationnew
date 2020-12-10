@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.app.beans.CheckListOperationBean;
 import com.app.exception.CheckListAppException;
@@ -38,14 +40,16 @@ public class CheckListOperationController {
 	@PostMapping(value = "/insertCheckListOperation", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> insertCheckListOperation(@Valid @RequestBody CheckListOperationBean checkListOperationBean)
 			throws CheckListAppException {
-		return new ResponseEntity<Object>(checkListOperationService.insertOrUpdateCheckListOperation(checkListOperationBean), HttpStatus.OK);
+		return new ResponseEntity<Object>(checkListOperationService.insertOrUpdateCheckListOperation(checkListOperationBean,null), HttpStatus.OK);
 	}
+	
+
 
 	@ApiOperation(value = "update checkListOperation after validation", response = ResponseEntity.class)
 	@PutMapping(value = "/updateCheckListOperation", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> updateCheckListOperation(@Valid @RequestBody CheckListOperationBean checkListOperationBean)
 			throws CheckListAppException {
-		return new ResponseEntity<Object>(checkListOperationService.insertOrUpdateCheckListOperation(checkListOperationBean), HttpStatus.OK);
+		return new ResponseEntity<Object>(checkListOperationService.insertOrUpdateCheckListOperation(checkListOperationBean,null), HttpStatus.OK);
 	}
 
 
@@ -60,10 +64,10 @@ public class CheckListOperationController {
 		return new ResponseEntity<Object>(checkListOperationService.getCheckListOperationByCheckListOperationId(checkListOperationId), HttpStatus.OK);
 	}
 	
-	@GetMapping(value = "/getCheckListOperationByFlatIdAndWorkTypeId/{flatId}/{workTypeId}")
-	public ResponseEntity<Object> getCheckListOperationByFlatIdAndWorkTypeId(@PathVariable("flatId") Long flatId,@PathVariable("workTypeId") Long workTypeId)
+	@GetMapping(value = "/getCheckListOperationTaskDetailsByFlatIdAndAndWorTypeAndTaskId/{flatId}/{workTypeId}/{taskId}")
+	public ResponseEntity<Object> getCheckListOperationTaskDetailsByFlatIdAndAndWorTypeAndTaskId(@PathVariable("flatId") Long flatId,@PathVariable("workTypeId") Long workTypeId,@PathVariable("taskId") Long taskId)
 			throws CheckListAppException {
-		return new ResponseEntity<Object>(checkListOperationService.getCheckListOperationByFlatIdAndWorkTypeId(flatId,workTypeId), HttpStatus.OK);
+		return new ResponseEntity<Object>(checkListOperationService.getCheckListOperationTaskDetailsByFlatIdAndAndWorTypeAndTaskId(flatId,workTypeId,taskId), HttpStatus.OK);
 	}
 	
 	
@@ -74,4 +78,10 @@ public class CheckListOperationController {
 		return new ResponseEntity<Object>(checkListOperationService.getCheckListOperationReport(checkListOperationBean), HttpStatus.OK);
 	}
 
+	@ApiOperation(value = "defect checkListOperation after validation", response = ResponseEntity.class)
+	@PostMapping(value = "/defectInsertCheckListOperation")
+	public ResponseEntity<Object> defectInsertCheckListOperation(@RequestBody CheckListOperationBean checkListOperationBean,@RequestParam("imageFile") MultipartFile file)
+			throws CheckListAppException {
+		return new ResponseEntity<Object>(checkListOperationService.insertOrUpdateCheckListOperationDefect(checkListOperationBean, file), HttpStatus.OK);
+	}
 }
