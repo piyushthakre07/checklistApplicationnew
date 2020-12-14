@@ -1,5 +1,6 @@
 package com.app.module.master.resources;
 
+import javax.swing.text.AbstractDocument.Content;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import com.app.beans.CheckListOperationDefectRequestBean;
 import com.app.exception.CheckListAppException;
 import com.app.module.master.service.ICheckListOperationService;
 
+import ch.qos.logback.core.util.ContentTypeUtil;
 import io.swagger.annotations.ApiOperation;
 
 /**
@@ -64,10 +66,21 @@ public class CheckListOperationController {
 		return new ResponseEntity<Object>(checkListOperationService.getCheckListOperationByCheckListOperationId(checkListOperationId), HttpStatus.OK);
 	}
 	
-	@GetMapping(value = "/getCheckListOperationTaskDetailsByFlatIdAndAndWorTypeAndTaskId/{flatId}/{workTypeId}/{taskId}/{roomId}")
-	public ResponseEntity<Object> getCheckListOperationTaskDetailsByFlatIdAndAndWorTypeAndTaskId(@PathVariable("flatId") Long flatId,@PathVariable("workTypeId") Long workTypeId,@PathVariable("taskId") Long taskId)
+	@GetMapping(value = "/getCheckListOperationTaskDetailsByFlatIdAndWorTypeAndTaskId/{flatId}/{workTypeId}/{taskId}")
+	public ResponseEntity<Object> getCheckListOperationTaskDetailsByFlatIdAndWorTypeAndTaskId(@PathVariable("flatId") Long flatId,@PathVariable("workTypeId") Long workTypeId,@PathVariable("taskId") Long taskId)
 			throws CheckListAppException {
 		return new ResponseEntity<Object>(checkListOperationService.getCheckListOperationTaskDetailsByFlatIdAndAndWorTypeAndTaskIdAndRoomId(flatId, workTypeId, taskId), HttpStatus.OK);
+	}
+	
+	@GetMapping(value = "/getDefectCheckListOperationByFlatIdAndWorTypeAndTaskIdAndRoomId/{flatId}/{workTypeId}/{taskId}/{roomId}",  produces = MediaType.IMAGE_JPEG_VALUE)
+	public ResponseEntity<Object> getDefectCheckListOperationByFlatIdAndWorTypeAndTaskIdAndRoomId(@PathVariable("flatId") Long flatId,@PathVariable("workTypeId") Long workTypeId,@PathVariable("taskId") Long taskId,@PathVariable("roomId") Long roomId)
+			throws CheckListAppException {
+		//return new ResponseEntity<Object>(checkListOperationService.getDefectCheckListOperationByFlatIdAndWorTypeAndTaskIdAndRoomId(flatId, workTypeId, taskId,roomId), HttpStatus.OK);
+		  return ResponseEntity
+	                .ok()
+	                .contentType(MediaType.IMAGE_JPEG)
+	                .body(checkListOperationService.getDefectCheckListOperationByFlatIdAndWorTypeAndTaskIdAndRoomId(flatId, workTypeId, taskId,roomId));
+	
 	}
 	
 	
