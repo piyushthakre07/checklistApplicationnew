@@ -197,10 +197,10 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 		checkListOperationTaskDetailsDao.save(checkListOperationTaskDetails);
 
 		if (checkListOperationDefectRequestBean.getUploadImages() != null) {
-			
+
 			Arrays.asList(checkListOperationDefectRequestBean.getUploadImages()).stream().forEach(file -> {
 				CheckListOperationDefectImageUpload checkListOperationDefectImageUpload = new CheckListOperationDefectImageUpload();
-                checkListOperationDefectImageUpload.setName(file.getOriginalFilename());
+				checkListOperationDefectImageUpload.setName(file.getOriginalFilename());
 				checkListOperationDefectImageUpload.setType(file.getContentType());
 				try {
 					checkListOperationDefectImageUpload.setPicByte(compressBytes(file.getBytes()));
@@ -244,13 +244,15 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 	}
 
 	@Override
-	public ResponseBean getCheckListOperationTaskDetailsByFlatIdAndAndWorTypeAndTaskIdAndRoomId(Long flatId, Long workTypeId,
-			Long taskId,Long roomId) throws CheckListAppException {
+	public ResponseBean getCheckListOperationTaskDetailsByFlatIdAndAndWorTypeAndTaskIdAndRoomId(Long flatId,
+			Long workTypeId, Long taskId) throws CheckListAppException {
 		try {
 			return ResponseBean.builder()
-					.data(prepareCheckListOperationResponseBeanFromCheckListOperationsByTaskIdAndRoomId(checkListOperationTaskDetailsDao
-							.getCheckListOperationTaskDetailsByFlatIdAndAndWorTypeAndTaskId(flatId, workTypeId,
-									taskId,roomId),taskId,roomId))
+					.data(prepareCheckListOperationResponseBeanFromCheckListOperationsByTaskId(
+							checkListOperationTaskDetailsDao
+									.getCheckListOperationTaskDetailsByFlatIdAndAndWorTypeAndTaskId(flatId, workTypeId,
+											taskId),
+							taskId))
 					.status(true).hasError(false).message(MessageConstant.SUCCESS_MESSAGE).build();
 		} catch (Exception e) {
 			throw new CheckListAppException(CheckListAppException.SERVER_ERROR, MessageConstant.SERVER_ERROR_MESSAGE,
@@ -360,9 +362,8 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 		return checkListOperationBeans;
 	}
 
-	
-	private List<CheckListOperationResponseBean> prepareCheckListOperationResponseBeanFromCheckListOperationsByTaskIdAndRoomId(
-			List<CheckListOperation> allCheckListOperations,Long taskId,Long roomId) throws CheckListAppException {
+	private List<CheckListOperationResponseBean> prepareCheckListOperationResponseBeanFromCheckListOperationsByTaskId(
+			List<CheckListOperation> allCheckListOperations, Long taskId) throws CheckListAppException {
 		List<CheckListOperationResponseBean> checkListOperationBeans = new ArrayList<CheckListOperationResponseBean>();
 		allCheckListOperations.forEach(checkListOperation -> {
 			CheckListOperationResponseBean checkListOperationBean = new CheckListOperationResponseBean();
@@ -403,33 +404,33 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 			List<CheckListOperationTaskResponseBean> checkListOperationTaskResponseBeanList = new ArrayList<CheckListOperationTaskResponseBean>();
 
 			checkListOperation.getCheckListOperationTaskDetails().stream().forEach(checkListOperationTaskDetails -> {
-				
-				if(checkListOperationTaskDetails.getTask().getTaskId()==taskId && checkListOperationTaskDetails.getRoom().getRoomId()== roomId) {
-				CheckListOperationTaskResponseBean checkListOperationTaskResponseBean = new CheckListOperationTaskResponseBean();
 
-				BeanUtils.copyProperties(checkListOperationTaskDetails, checkListOperationTaskResponseBean);
+				if (checkListOperationTaskDetails.getTask().getTaskId() == taskId) {
+					CheckListOperationTaskResponseBean checkListOperationTaskResponseBean = new CheckListOperationTaskResponseBean();
 
-				TaskBean task = new TaskBean();
-				BeanUtils.copyProperties(checkListOperationTaskDetails.getTask(), task);
-				checkListOperationTaskResponseBean.setTask(task);
+					BeanUtils.copyProperties(checkListOperationTaskDetails, checkListOperationTaskResponseBean);
 
-				RoomBean room = new RoomBean();
-				BeanUtils.copyProperties(checkListOperationTaskDetails.getRoom(), room);
-				checkListOperationTaskResponseBean.setRoom(room);
+					TaskBean task = new TaskBean();
+					BeanUtils.copyProperties(checkListOperationTaskDetails.getTask(), task);
+					checkListOperationTaskResponseBean.setTask(task);
 
-				try {
-					List<AssignWorkToContractorResponseBean> list = assignWorkToContractorService
-							.getAssignWorkToContractorByFlatIdNWorkType(checkListOperation.getFlat().getFlatId(),
-									checkListOperation.getWorkType().getWorkTypeId());
+					RoomBean room = new RoomBean();
+					BeanUtils.copyProperties(checkListOperationTaskDetails.getRoom(), room);
+					checkListOperationTaskResponseBean.setRoom(room);
 
-					if (list != null && !list.isEmpty())
-						checkListOperationTaskResponseBean.setContractor(list.get(0).getContractor());
+					try {
+						List<AssignWorkToContractorResponseBean> list = assignWorkToContractorService
+								.getAssignWorkToContractorByFlatIdNWorkType(checkListOperation.getFlat().getFlatId(),
+										checkListOperation.getWorkType().getWorkTypeId());
 
-				} catch (CheckListAppException e) {
+						if (list != null && !list.isEmpty())
+							checkListOperationTaskResponseBean.setContractor(list.get(0).getContractor());
 
+					} catch (CheckListAppException e) {
+
+					}
+					checkListOperationTaskResponseBeanList.add(checkListOperationTaskResponseBean);
 				}
-				checkListOperationTaskResponseBeanList.add(checkListOperationTaskResponseBean);
-			}
 
 			});
 			checkListOperationBean.setCheckListOperationTaskResponseBeanList(checkListOperationTaskResponseBeanList);
@@ -438,6 +439,7 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 		});
 		return checkListOperationBeans;
 	}
+
 	public static byte[] compressBytes(byte[] data) {
 
 		Deflater deflater = new Deflater();

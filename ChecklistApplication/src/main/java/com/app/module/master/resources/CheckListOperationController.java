@@ -65,9 +65,9 @@ public class CheckListOperationController {
 	}
 	
 	@GetMapping(value = "/getCheckListOperationTaskDetailsByFlatIdAndAndWorTypeAndTaskId/{flatId}/{workTypeId}/{taskId}/{roomId}")
-	public ResponseEntity<Object> getCheckListOperationTaskDetailsByFlatIdAndAndWorTypeAndTaskId(@PathVariable("flatId") Long flatId,@PathVariable("workTypeId") Long workTypeId,@PathVariable("taskId") Long taskId,@PathVariable("roomId") Long roomId)
+	public ResponseEntity<Object> getCheckListOperationTaskDetailsByFlatIdAndAndWorTypeAndTaskId(@PathVariable("flatId") Long flatId,@PathVariable("workTypeId") Long workTypeId,@PathVariable("taskId") Long taskId)
 			throws CheckListAppException {
-		return new ResponseEntity<Object>(checkListOperationService.getCheckListOperationTaskDetailsByFlatIdAndAndWorTypeAndTaskIdAndRoomId(flatId, workTypeId, taskId, roomId), HttpStatus.OK);
+		return new ResponseEntity<Object>(checkListOperationService.getCheckListOperationTaskDetailsByFlatIdAndAndWorTypeAndTaskIdAndRoomId(flatId, workTypeId, taskId), HttpStatus.OK);
 	}
 	
 	

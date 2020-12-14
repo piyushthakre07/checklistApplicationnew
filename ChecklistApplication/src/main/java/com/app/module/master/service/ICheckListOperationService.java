@@ -16,7 +16,7 @@ public interface ICheckListOperationService {
 			throws CheckListAppException;
 
 	
-	ResponseBean getCheckListOperationTaskDetailsByFlatIdAndAndWorTypeAndTaskIdAndRoomId(Long flatId, Long workTypeId,Long taskId,Long roomId) throws CheckListAppException;
+	ResponseBean getCheckListOperationTaskDetailsByFlatIdAndAndWorTypeAndTaskIdAndRoomId(Long flatId, Long workTypeId,Long taskId) throws CheckListAppException;
 
 	ResponseBean insertOrUpdateCheckListOperationDefect(CheckListOperationDefectRequestBean checkListOperationDefectRequestBean) throws CheckListAppException;
 

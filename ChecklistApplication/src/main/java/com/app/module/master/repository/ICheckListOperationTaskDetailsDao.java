@@ -11,8 +11,7 @@ import com.app.entities.CheckListOperationTaskDetails;
 
 public interface ICheckListOperationTaskDetailsDao extends JpaRepository<CheckListOperationTaskDetails, Long> {
 
-	@Query("select checkListOperationTaskDetails.checkListOperation from CheckListOperationTaskDetails checkListOperationTaskDetails where checkListOperationTaskDetails.task.taskId= :taskId and checkListOperationTaskDetails.checkListOperation.flat.flatId= :flatId and  checkListOperationTaskDetails.checkListOperation.workType.workTypeId=:workTypeId and checkListOperationTaskDetails.checkListOperation.room.roomId=:roomId")
+	@Query("select checkListOperationTaskDetails.checkListOperation from CheckListOperationTaskDetails checkListOperationTaskDetails where checkListOperationTaskDetails.task.taskId= :taskId and checkListOperationTaskDetails.checkListOperation.flat.flatId= :flatId and  checkListOperationTaskDetails.checkListOperation.workType.workTypeId=:workTypeId")
 	List<CheckListOperation> getCheckListOperationTaskDetailsByFlatIdAndAndWorTypeAndTaskId(
-			@Param("flatId") Long flatId, @Param("workTypeId") Long workTypeId, @Param("taskId") Long taskId,
-			@Param("roomId") Long roomId);
+			@Param("flatId") Long flatId, @Param("workTypeId") Long workTypeId, @Param("taskId") Long taskId);
 }
