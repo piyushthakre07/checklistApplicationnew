@@ -365,7 +365,7 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 	private List<CheckListOperationResponseBean> prepareCheckListOperationResponseBeanFromCheckListOperationsByTaskId(
 			List<CheckListOperation> allCheckListOperations, Long taskId) throws CheckListAppException {
 		List<CheckListOperationResponseBean> checkListOperationBeans = new ArrayList<CheckListOperationResponseBean>();
-		allCheckListOperations.forEach(checkListOperation -> {
+		    CheckListOperation checkListOperation=allCheckListOperations.get(0);
 			CheckListOperationResponseBean checkListOperationBean = new CheckListOperationResponseBean();
 			BeanUtils.copyProperties(checkListOperation, checkListOperationBean);
 
@@ -436,7 +436,7 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 			checkListOperationBean.setCheckListOperationTaskResponseBeanList(checkListOperationTaskResponseBeanList);
 
 			checkListOperationBeans.add(checkListOperationBean);
-		});
+	
 		return checkListOperationBeans;
 	}
 
