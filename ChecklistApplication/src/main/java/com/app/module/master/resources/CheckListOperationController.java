@@ -14,9 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.app.beans.CheckListOperationBean;
 import com.app.beans.CheckListOperationDefectRequestBean;
@@ -66,10 +64,10 @@ public class CheckListOperationController {
 		return new ResponseEntity<Object>(checkListOperationService.getCheckListOperationByCheckListOperationId(checkListOperationId), HttpStatus.OK);
 	}
 	
-	@GetMapping(value = "/getCheckListOperationTaskDetailsByFlatIdAndAndWorTypeAndTaskId/{flatId}/{workTypeId}/{taskId}")
-	public ResponseEntity<Object> getCheckListOperationTaskDetailsByFlatIdAndAndWorTypeAndTaskId(@PathVariable("flatId") Long flatId,@PathVariable("workTypeId") Long workTypeId,@PathVariable("taskId") Long taskId)
+	@GetMapping(value = "/getCheckListOperationTaskDetailsByFlatIdAndAndWorTypeAndTaskId/{flatId}/{workTypeId}/{taskId}/{roomId}")
+	public ResponseEntity<Object> getCheckListOperationTaskDetailsByFlatIdAndAndWorTypeAndTaskId(@PathVariable("flatId") Long flatId,@PathVariable("workTypeId") Long workTypeId,@PathVariable("taskId") Long taskId,@PathVariable("roomId") Long roomId)
 			throws CheckListAppException {
-		return new ResponseEntity<Object>(checkListOperationService.getCheckListOperationTaskDetailsByFlatIdAndAndWorTypeAndTaskId(flatId,workTypeId,taskId), HttpStatus.OK);
+		return new ResponseEntity<Object>(checkListOperationService.getCheckListOperationTaskDetailsByFlatIdAndAndWorTypeAndTaskIdAndRoomId(flatId, workTypeId, taskId, roomId), HttpStatus.OK);
 	}
 	
 	

@@ -1,7 +1,5 @@
 package com.app.module.master.service;
 
-import org.springframework.web.multipart.MultipartFile;
-
 import com.app.beans.CheckListOperationBean;
 import com.app.beans.CheckListOperationDefectRequestBean;
 import com.app.beans.ResponseBean;
@@ -18,7 +16,7 @@ public interface ICheckListOperationService {
 			throws CheckListAppException;
 
 	
-	ResponseBean getCheckListOperationTaskDetailsByFlatIdAndAndWorTypeAndTaskId(Long flatId, Long workTypeId,Long taskId) throws CheckListAppException;
+	ResponseBean getCheckListOperationTaskDetailsByFlatIdAndAndWorTypeAndTaskIdAndRoomId(Long flatId, Long workTypeId,Long taskId,Long roomId) throws CheckListAppException;
 
 	ResponseBean insertOrUpdateCheckListOperationDefect(CheckListOperationDefectRequestBean checkListOperationDefectRequestBean) throws CheckListAppException;
 
