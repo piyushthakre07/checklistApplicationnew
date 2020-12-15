@@ -115,18 +115,24 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 			} else {
 				checkListOperation = checkListOperationList.get(0);
 			}
-			CheckListOperationTaskDetails checkListOperationTaskDetails = new CheckListOperationTaskDetails();
-			BeanUtils.copyProperties(checkListOperationBean, checkListOperationTaskDetails);
+			
+			List<CheckListOperationTaskDetails> checkListOperationTaskDetailsList=checkListOperationTaskDetailsDao.getCheckListOperationTaskDetailsByTaskIdNRoomIdNCheckListOperationIdNIsOwner(checkListOperationBean.getTaskId(), taskDetail.getRoomId(), checkListOperation.getCheckListOperationId(), checkListOperationBean.is_owner(), checkListOperationBean.is_user());
+			CheckListOperationTaskDetails checkListOperationTaskDetails = null;
+			if(checkListOperationTaskDetailsList.isEmpty()) {
+			 checkListOperationTaskDetails = new CheckListOperationTaskDetails();
+			 Task task = new Task();
+				task.setTaskId(checkListOperationBean.getTaskId());
+				checkListOperationTaskDetails.setTask(task);
 
-			Task task = new Task();
-			task.setTaskId(checkListOperationBean.getTaskId());
-			checkListOperationTaskDetails.setTask(task);
-
-			Room room = new Room();
-			room.setRoomId(taskDetail.getRoomId());
-			checkListOperationTaskDetails.setRoom(room);
-
-			checkListOperationTaskDetails.setCheckListOperation(checkListOperation);
+				Room room = new Room();
+				room.setRoomId(taskDetail.getRoomId());
+				checkListOperationTaskDetails.setRoom(room);
+				checkListOperationTaskDetails.setCheckListOperation(checkListOperation);
+			 
+		}else {
+			checkListOperationTaskDetails=checkListOperationTaskDetailsList.get(0);
+		}
+			BeanUtils.copyProperties(taskDetail, checkListOperationTaskDetails);
 			checkListOperationTaskDetails.setFault(false);
 			checkListOperationTaskDetailsDao.save(checkListOperationTaskDetails);
 		});
