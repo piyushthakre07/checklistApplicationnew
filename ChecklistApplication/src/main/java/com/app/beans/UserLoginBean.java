@@ -15,6 +15,8 @@ public class UserLoginBean {
 
     private String userType;
 	
+    private String token;
+    
 	private boolean active;
 	
 	private boolean block;

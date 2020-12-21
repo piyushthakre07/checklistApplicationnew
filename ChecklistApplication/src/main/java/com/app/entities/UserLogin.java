@@ -29,6 +29,9 @@ public class UserLogin extends AuditMaster {
 	@Column(name = "password", length = 30)
     private String password;
 	
+	@Column(name = "token", length = 50)
+    private String token;
+	
 	@Column(name = "user_type", length = 30)
     private String userType;
 	

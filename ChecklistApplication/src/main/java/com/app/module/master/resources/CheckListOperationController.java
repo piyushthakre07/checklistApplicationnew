@@ -1,6 +1,5 @@
 package com.app.module.master.resources;
 
-import javax.swing.text.AbstractDocument.Content;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +21,6 @@ import com.app.beans.CheckListOperationDefectRequestBean;
 import com.app.exception.CheckListAppException;
 import com.app.module.master.service.ICheckListOperationService;
 
-import ch.qos.logback.core.util.ContentTypeUtil;
 import io.swagger.annotations.ApiOperation;
 
 /**
