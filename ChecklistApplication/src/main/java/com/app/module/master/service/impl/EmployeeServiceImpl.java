@@ -15,6 +15,7 @@ import com.app.entities.Employee;
 import com.app.entities.UserLogin;
 import com.app.exception.CheckListAppException;
 import com.app.module.master.repository.IFlatDao;
+import com.app.module.master.repository.IUserLoginDao;
 import com.app.module.master.repository.IEmployeeDao;
 import com.app.module.master.service.IEmployeeService;
 
@@ -31,6 +32,9 @@ public class EmployeeServiceImpl implements IEmployeeService {
 
 	@Autowired
 	IFlatDao flatDao;
+	
+	@Autowired
+	IUserLoginDao userLoginDao;
 
 	@Override
 	public ResponseBean insertOrUpdateEmployee(EmployeeBean employeeBean) throws CheckListAppException {
@@ -38,6 +42,7 @@ public class EmployeeServiceImpl implements IEmployeeService {
 		BeanUtils.copyProperties(employeeBean, employee);
 		UserLogin userLogin = new UserLogin();
 		BeanUtils.copyProperties(employeeBean.getUserLogin(), userLogin);
+		userLoginDao.save(userLogin);
 		employee.setUserLogin(userLogin);
 		employeeDao.save(employee);
 		return ResponseBean.builder().message(MessageConstant.DATA_SAVE_SUCCESS)
