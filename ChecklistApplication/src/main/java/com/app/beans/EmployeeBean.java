@@ -25,6 +25,8 @@ public class EmployeeBean {
 	private String address;
 	
 	private String description;
+	
+	private UserLoginBean userLogin;
 
 	@ApiModelProperty(hidden = true)
 	private boolean active;

@@ -12,6 +12,7 @@ import com.app.beans.OwnerBean;
 import com.app.beans.ResponseBean;
 import com.app.constant.MessageConstant;
 import com.app.entities.Owner;
+import com.app.entities.UserLogin;
 import com.app.exception.CheckListAppException;
 import com.app.module.master.repository.IFlatDao;
 import com.app.module.master.repository.IOwnerDao;
@@ -35,6 +36,9 @@ public class OwnerServiceImpl implements IOwnerService {
 	public ResponseBean insertOrUpdateOwner(OwnerBean ownerBean) throws CheckListAppException {
 		Owner owner = new Owner();
 		BeanUtils.copyProperties(ownerBean, owner);
+		UserLogin userLogin = new UserLogin();
+		BeanUtils.copyProperties(ownerBean.getUserLogin(), userLogin);
+		owner.setUserLogin(userLogin);
 		ownerDao.save(owner);
 		return ResponseBean.builder().message(MessageConstant.DATA_SAVE_SUCCESS)
 				.messageDescription(MessageConstant.OWNER_SAVE_SUCCESS_MESSAGE).status(true)

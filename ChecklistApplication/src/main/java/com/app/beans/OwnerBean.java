@@ -12,6 +12,7 @@ import lombok.Setter;
 @Getter
 public class OwnerBean { 
 
+	@ApiModelProperty(hidden = true)
 	private Long ownerId;
 
 	private String ownerName;
@@ -25,7 +26,9 @@ public class OwnerBean {
 	private String address;
 	
 	private String description;
-
+	
+	private UserLoginBean userLogin;
+	
 	@ApiModelProperty(hidden = true)
 	private boolean active;
 
