@@ -18,6 +18,7 @@ import com.app.beans.AssignWorkToContractorResponseBean;
 import com.app.beans.BuildingBean;
 import com.app.beans.CheckListOperationBean;
 import com.app.beans.CheckListOperationDefectRequestBean;
+import com.app.beans.CheckListOperationNewResponseBean;
 import com.app.beans.CheckListOperationResponseBean;
 import com.app.beans.CheckListOperationTaskResponseBean;
 import com.app.beans.FlatBean;
@@ -27,8 +28,11 @@ import com.app.beans.OwnerBean;
 import com.app.beans.ProjectBean;
 import com.app.beans.ResponseBean;
 import com.app.beans.RoomBean;
+import com.app.beans.RoomResponseBean;
 import com.app.beans.TaskBean;
+import com.app.beans.TaskResponseBean;
 import com.app.beans.WorkTypeBean;
+import com.app.beans.WorkTypeResponseBean;
 import com.app.constant.MessageConstant;
 import com.app.entities.Building;
 import com.app.entities.CheckListOperation;
@@ -46,6 +50,8 @@ import com.app.module.master.repository.ICheckListOperationDao;
 import com.app.module.master.repository.ICheckListOperationDefectImageUploadDao;
 import com.app.module.master.repository.ICheckListOperationTaskDetailsDao;
 import com.app.module.master.repository.IFlatDao;
+import com.app.module.master.service.IAssignRoomToFlatService;
+import com.app.module.master.service.IAssignTaskToFlatService;
 import com.app.module.master.service.IAssignWorkToContractorService;
 import com.app.module.master.service.ICheckListOperationService;
 
@@ -71,6 +77,14 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 
 	@Autowired
 	IAssignWorkToContractorService assignWorkToContractorService;
+	
+	@Autowired
+	IAssignRoomToFlatService assignRoomToFlatService;
+	
+	@Autowired
+	IAssignTaskToFlatService assignTaskToFlatService;
+	
+	
 
 	@Override
 	public ResponseBean insertOrUpdateCheckListOperation(CheckListOperationBean checkListOperationBean)
@@ -115,12 +129,16 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 			} else {
 				checkListOperation = checkListOperationList.get(0);
 			}
-			
-			List<CheckListOperationTaskDetails> checkListOperationTaskDetailsList=checkListOperationTaskDetailsDao.getCheckListOperationTaskDetailsByTaskIdNRoomIdNCheckListOperationIdNIsOwner(checkListOperationBean.getTaskId(), taskDetail.getRoomId(), checkListOperation.getCheckListOperationId(), checkListOperationBean.is_owner(), checkListOperationBean.is_user());
+
+			List<CheckListOperationTaskDetails> checkListOperationTaskDetailsList = checkListOperationTaskDetailsDao
+					.getCheckListOperationTaskDetailsByTaskIdNRoomIdNCheckListOperationIdNIsOwner(
+							checkListOperationBean.getTaskId(), taskDetail.getRoomId(),
+							checkListOperation.getCheckListOperationId(), checkListOperationBean.is_owner(),
+							checkListOperationBean.is_user());
 			CheckListOperationTaskDetails checkListOperationTaskDetails = null;
-			if(checkListOperationTaskDetailsList.isEmpty()) {
-			 checkListOperationTaskDetails = new CheckListOperationTaskDetails();
-			 Task task = new Task();
+			if (checkListOperationTaskDetailsList.isEmpty()) {
+				checkListOperationTaskDetails = new CheckListOperationTaskDetails();
+				Task task = new Task();
 				task.setTaskId(checkListOperationBean.getTaskId());
 				checkListOperationTaskDetails.setTask(task);
 
@@ -128,12 +146,15 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 				room.setRoomId(taskDetail.getRoomId());
 				checkListOperationTaskDetails.setRoom(room);
 				checkListOperationTaskDetails.setCheckListOperation(checkListOperation);
-			 
-		}else {
-			checkListOperationTaskDetails=checkListOperationTaskDetailsList.get(0);
-		}
+
+			} else {
+				checkListOperationTaskDetails = checkListOperationTaskDetailsList.get(0);
+			}
 			BeanUtils.copyProperties(taskDetail, checkListOperationTaskDetails);
-			checkListOperationTaskDetails.setFault(false);
+			if (checkListOperationBean.is_owner())
+				checkListOperationTaskDetails.setFaultOwner(true);
+			else
+				checkListOperationTaskDetails.setFaultUser(true);
 			checkListOperationTaskDetailsDao.save(checkListOperationTaskDetails);
 		});
 
@@ -178,6 +199,7 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 				Owner owner = new Owner();
 				owner.setOwnerId(checkListOperationDefectRequestBean.getOwnerId());
 				checkListOperation.setOwner(owner);
+
 			}
 
 			checkListOperationDao.save(checkListOperation);
@@ -195,9 +217,17 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 		room.setRoomId(checkListOperationDefectRequestBean.getRoomId());
 		checkListOperationTaskDetails.setRoom(room);
 
-		checkListOperationTaskDetails.setFault(true);
+		if (checkListOperationDefectRequestBean.isOwner())
+			checkListOperationTaskDetails.setFaultOwner(true);
+		else
+			checkListOperationTaskDetails.setFaultUser(true);
 
-		checkListOperationTaskDetails.setCheck(false);
+		if (checkListOperationDefectRequestBean.isOwner())
+			checkListOperationTaskDetails.setOwnerCheck(false);
+		else
+			checkListOperationTaskDetails.setUserCheck(false);
+
+		checkListOperationTaskDetails.setFaultRemark(checkListOperationDefectRequestBean.getFaultRemark());
 
 		checkListOperationTaskDetails.setCheckListOperation(checkListOperation);
 		checkListOperationTaskDetailsDao.save(checkListOperationTaskDetails);
@@ -292,6 +322,88 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 									checkListOperationBean.getBuildingId(), checkListOperationBean.getFlatId(),
 									checkListOperationBean.getWorkTypeId())))
 					.status(true).hasError(false).message(MessageConstant.SUCCESS_MESSAGE).build();
+		} catch (Exception e) {
+			throw new CheckListAppException(CheckListAppException.SERVER_ERROR, MessageConstant.SERVER_ERROR_MESSAGE,
+					MessageConstant.QUERY_FETCH_EXCPTION);
+		}
+	}
+	
+	
+	@Override
+	public ResponseBean getCheckListOperationReportNew(CheckListOperationBean checkListOperationBean)
+			throws CheckListAppException {
+		try {
+			CheckListOperationNewResponseBean checkListOperationNewResponseBean = new CheckListOperationNewResponseBean();
+			checkListOperationNewResponseBean
+					.setHeaderRooms(assignRoomToFlatService.getRoomBeansByFlatId(checkListOperationBean.getFlatId()));
+			Flat flat = (flatDao.getFlatByFlatId(checkListOperationBean.getFlatId())).get(0);
+
+			if (flat != null) {
+				ProjectBean projectBean = new ProjectBean();
+				BeanUtils.copyProperties(flat.getProject(), projectBean);
+				checkListOperationNewResponseBean.setProject(projectBean);
+
+				BuildingBean buildingBean = new BuildingBean();
+				BeanUtils.copyProperties(flat.getBuilding(), buildingBean);
+				checkListOperationNewResponseBean.setBuilding(buildingBean);
+
+				if (flat.getOwner() != null) {
+					OwnerBean ownerBean = new OwnerBean();
+					BeanUtils.copyProperties(flat.getOwner(), ownerBean);
+					checkListOperationNewResponseBean.setOwner(ownerBean);
+				}
+
+				FlatBean flatBean = new FlatBean();
+				BeanUtils.copyProperties(flat, flatBean);
+				checkListOperationNewResponseBean.setFlat(flatBean);
+
+				List<WorkTypeResponseBean> workTypeResponseBeanList = assignTaskToFlatService
+						.getWorkTypeResponseBean(checkListOperationBean.getFlatId());
+				workTypeResponseBeanList.stream().forEach(workTypeResponseBean -> {
+					try {
+						List<TaskResponseBean> tasks = assignTaskToFlatService.getTaskResponseBeanByFlatIdAndWorktype(
+								checkListOperationBean.getFlatId(), workTypeResponseBean.getWorkTypeId());
+						tasks.stream().forEach(task -> {
+							List<RoomResponseBean> roomResponseBeans = new ArrayList<RoomResponseBean>();
+
+							checkListOperationNewResponseBean.getHeaderRooms().stream().forEach(headerRoom -> {
+								List<CheckListOperationTaskDetails> checkListOperationTaskDetailsList = checkListOperationTaskDetailsDao
+										.getCheckListOperationTaskDetailsByFlatIdAndAndWorTypeAndTaskIdAndRoomId(
+												checkListOperationBean.getFlatId(),
+												workTypeResponseBean.getWorkTypeId(), task.getTaskId(),
+												headerRoom.getRoomId());
+								RoomResponseBean roomResponseBean = new RoomResponseBean();
+								if (checkListOperationTaskDetailsList != null
+										&& !checkListOperationTaskDetailsList.isEmpty()) {
+									CheckListOperationTaskDetails checkListOperationTaskDetails = checkListOperationTaskDetailsList
+											.get(0);
+									roomResponseBean.setRoomId(checkListOperationTaskDetails.getRoom().getRoomId());
+									roomResponseBean.setOwnerChecked(checkListOperationTaskDetails.isOwnerCheck());
+									roomResponseBean.setUserChecked(checkListOperationTaskDetails.isUserCheck());
+
+									if (!checkListOperationTaskDetails.isOwnerCheck()
+											&& checkListOperationTaskDetails.getFaultOwner())
+										roomResponseBean.setOwnerChecked(false);
+									if (!checkListOperationTaskDetails.isUserCheck()
+											&& checkListOperationTaskDetails.getFaultUser())
+										roomResponseBean.setUserChecked(false);
+
+									roomResponseBeans.add(roomResponseBean);
+
+								}
+							});
+							task.setRooms(roomResponseBeans);
+						});
+
+						workTypeResponseBean.setTasks(tasks);
+					} catch (CheckListAppException e) {
+					}
+				});
+				checkListOperationNewResponseBean.setWorkTypes(workTypeResponseBeanList);
+			}
+
+			return ResponseBean.builder().data(checkListOperationNewResponseBean).status(true).hasError(false)
+					.message(MessageConstant.SUCCESS_MESSAGE).build();
 		} catch (Exception e) {
 			throw new CheckListAppException(CheckListAppException.SERVER_ERROR, MessageConstant.SERVER_ERROR_MESSAGE,
 					MessageConstant.QUERY_FETCH_EXCPTION);

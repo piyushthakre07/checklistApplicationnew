@@ -31,9 +31,11 @@ public class CheckListOperationDefectRequestBean {
 	
 	private Date checkListDate;
 	
+	private String faultRemark;
+	
 	private MultipartFile[] uploadImages;
  
-	private boolean is_owner;
+	private boolean isOwner;
 
-	private boolean is_user;
+	private boolean isUser;
 }

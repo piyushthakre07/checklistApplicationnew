@@ -1,5 +1,6 @@
 package com.app.beans;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,10 +16,12 @@ public class UserLoginBean {
 
     private String userType;
 	
+    @ApiModelProperty(hidden = true)
     private String token;
     
 	private boolean active;
 	
+	@ApiModelProperty(hidden = true)
 	private boolean block;
 	
 

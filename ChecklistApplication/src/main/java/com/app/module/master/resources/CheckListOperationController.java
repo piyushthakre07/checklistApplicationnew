@@ -43,15 +43,12 @@ public class CheckListOperationController {
 		return new ResponseEntity<Object>(checkListOperationService.insertOrUpdateCheckListOperation(checkListOperationBean), HttpStatus.OK);
 	}
 	
-
-
 	@ApiOperation(value = "update checkListOperation after validation", response = ResponseEntity.class)
 	@PutMapping(value = "/updateCheckListOperation", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> updateCheckListOperation(@Valid @RequestBody CheckListOperationBean checkListOperationBean)
 			throws CheckListAppException {
 		return new ResponseEntity<Object>(checkListOperationService.insertOrUpdateCheckListOperation(checkListOperationBean), HttpStatus.OK);
 	}
-
 
 	@GetMapping(value = "/getCheckListOperations")
 	public ResponseEntity<Object> getCheckListOperations() throws CheckListAppException {
@@ -81,12 +78,18 @@ public class CheckListOperationController {
 	
 	}
 	
-	
 	@ApiOperation(value = "CheckListOperation Report", response = ResponseEntity.class)
 	@PostMapping(value = "/getCheckListOperationReport", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> getCheckListOperationReport(@RequestBody CheckListOperationBean checkListOperationBean)
 			throws CheckListAppException {
 		return new ResponseEntity<Object>(checkListOperationService.getCheckListOperationReport(checkListOperationBean), HttpStatus.OK);
+	}
+	
+	@ApiOperation(value = "CheckListOperation Report", response = ResponseEntity.class)
+	@PostMapping(value = "/getTaskStatusReport", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> getTaskStatusReport(@RequestBody CheckListOperationBean checkListOperationBean)
+			throws CheckListAppException {
+		return new ResponseEntity<Object>(checkListOperationService.getCheckListOperationReportNew(checkListOperationBean), HttpStatus.OK);
 	}
 
 	@ApiOperation(value = "defect checkListOperation after validation", response = ResponseEntity.class)

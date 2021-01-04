@@ -16,7 +16,9 @@ import com.app.beans.FlatTypeBean;
 import com.app.beans.ProjectBean;
 import com.app.beans.ResponseBean;
 import com.app.beans.TaskBean;
+import com.app.beans.TaskResponseBean;
 import com.app.beans.WorkTypeBean;
+import com.app.beans.WorkTypeResponseBean;
 import com.app.constant.MessageConstant;
 import com.app.entities.AssignTaskToFlat;
 import com.app.entities.Building;
@@ -149,6 +151,27 @@ public class AssignTaskToFlatServiceImpl implements IAssignTaskToFlatService {
 					MessageConstant.QUERY_FETCH_EXCPTION);
 		}
 	}
+	
+	@Override
+	public List<TaskResponseBean> getTaskResponseBeanByFlatIdAndWorktype(Long flatId,Long workTypeId) throws CheckListAppException {
+		try {
+			return prepareTaskResponseBeanFromAssignTaskToFlat(
+							assignTaskToFlatDao.getTaskByFlatIdAndWorktype(flatId, workTypeId));
+		} catch (Exception e) {
+			throw new CheckListAppException(CheckListAppException.SERVER_ERROR, MessageConstant.SERVER_ERROR_MESSAGE,
+					MessageConstant.QUERY_FETCH_EXCPTION);
+		}
+	}
+	
+	@Override
+	public List<WorkTypeResponseBean> getWorkTypeResponseBean(Long flatId) throws CheckListAppException {
+		try {
+			return prepareWorkTypeBeansFromAssignTaskToFlat(assignTaskToFlatDao.getWorkTypeByFlatId(flatId));
+		} catch (Exception e) {
+			throw new CheckListAppException(CheckListAppException.SERVER_ERROR, MessageConstant.SERVER_ERROR_MESSAGE,
+					MessageConstant.QUERY_FETCH_EXCPTION);
+		}
+	}
 
 	@Override
 	public ResponseBean getAssignTaskToFlats() throws CheckListAppException {
@@ -216,5 +239,27 @@ public class AssignTaskToFlatServiceImpl implements IAssignTaskToFlatService {
 			taskBeans.add(taskBean);
 		});
 		return taskBeans;
+	}
+	
+	private List<TaskResponseBean> prepareTaskResponseBeanFromAssignTaskToFlat(
+			List<AssignTaskToFlat> allAssignTaskToFlats) {
+		List<TaskResponseBean> taskBeans = new ArrayList<TaskResponseBean>();
+		allAssignTaskToFlats.forEach(assignTaskToFlat -> {
+			TaskResponseBean taskBean = new TaskResponseBean();
+			BeanUtils.copyProperties(assignTaskToFlat.getTask(), taskBean);
+			taskBeans.add(taskBean);
+		});
+		return taskBeans;
+	}
+	
+	private List<WorkTypeResponseBean> prepareWorkTypeBeansFromAssignTaskToFlat(
+			List<WorkType> allWorkTypeFromAssignTaskToFlats) {
+		List<WorkTypeResponseBean> workTypeBeanList = new ArrayList<WorkTypeResponseBean>();
+		allWorkTypeFromAssignTaskToFlats.forEach(workType -> {
+			WorkTypeResponseBean workTypeBean = new WorkTypeResponseBean();
+			BeanUtils.copyProperties(workType , workTypeBean);
+			workTypeBeanList.add(workTypeBean);
+		});
+		return workTypeBeanList;
 	}
 }

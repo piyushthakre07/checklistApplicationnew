@@ -20,4 +20,9 @@ public interface ICheckListOperationDao extends JpaRepository<CheckListOperation
 			@Param("buildingId") Long buildingId, @Param("flatId") Long flatId, @Param("workTypeId") Long workTypeId);
 	
 
+	@Query("select checkListOperation from CheckListOperation checkListOperation WHERE (:projectId is null or checkListOperation.project.projectId = :projectId) and (:buildingId is null"
+			+ " or checkListOperation.building.buildingId = :buildingId) and  (:flatId is null or checkListOperation.flat.flatId = :flatId) "
+			+ " and  (:workTypeId is null or checkListOperation.workType.workTypeId = :workTypeId) ")
+	List<CheckListOperation> getTaskStatusReport(@Param("projectId") Long projectId,
+			@Param("buildingId") Long buildingId, @Param("flatId") Long flatId, @Param("workTypeId") Long workTypeId);
 }

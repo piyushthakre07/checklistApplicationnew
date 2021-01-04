@@ -28,4 +28,7 @@ public interface ICheckListOperationService {
 	 List<byte[]> getDefectCheckListOperationByFlatIdAndWorTypeAndTaskIdAndRoomId(Long flatId, Long workTypeId,
 			Long taskId, Long roomId) throws CheckListAppException;
 
+	ResponseBean getCheckListOperationReportNew(CheckListOperationBean checkListOperationBean)
+			throws CheckListAppException;
+
 }

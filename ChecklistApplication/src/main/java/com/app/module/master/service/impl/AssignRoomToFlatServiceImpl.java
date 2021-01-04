@@ -134,7 +134,7 @@ public class AssignRoomToFlatServiceImpl implements IAssignRoomToFlatService {
 					MessageConstant.QUERY_FETCH_EXCPTION);
 		}
 	}
-
+	
 	@Override
 	public ResponseBean getRoomByFlatId(Long flatId) throws CheckListAppException {
 		try {
@@ -142,6 +142,17 @@ public class AssignRoomToFlatServiceImpl implements IAssignRoomToFlatService {
 					.data(prepareRoomBeansFromAssignRoomToFlat(
 							assignRoomToFlatDao.getAssignRoomToFlatByFlatId(flatId)))
 					.status(true).hasError(false).message(MessageConstant.SUCCESS_MESSAGE).build();
+		} catch (Exception e) {
+			throw new CheckListAppException(CheckListAppException.SERVER_ERROR, MessageConstant.SERVER_ERROR_MESSAGE,
+					MessageConstant.QUERY_FETCH_EXCPTION);
+		}
+	}
+	
+	@Override
+	public List<RoomBean> getRoomBeansByFlatId(Long flatId) throws CheckListAppException {
+		try {
+			return prepareRoomBeansFromAssignRoomToFlat(
+							assignRoomToFlatDao.getAssignRoomToFlatByFlatId(flatId));
 		} catch (Exception e) {
 			throw new CheckListAppException(CheckListAppException.SERVER_ERROR, MessageConstant.SERVER_ERROR_MESSAGE,
 					MessageConstant.QUERY_FETCH_EXCPTION);
