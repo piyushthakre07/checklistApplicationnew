@@ -133,8 +133,7 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 			List<CheckListOperationTaskDetails> checkListOperationTaskDetailsList = checkListOperationTaskDetailsDao
 					.getCheckListOperationTaskDetailsByTaskIdNRoomIdNCheckListOperationIdNIsOwner(
 							checkListOperationBean.getTaskId(), taskDetail.getRoomId(),
-							checkListOperation.getCheckListOperationId(), checkListOperationBean.is_owner(),
-							checkListOperationBean.is_user());
+							checkListOperation.getCheckListOperationId());
 			CheckListOperationTaskDetails checkListOperationTaskDetails = null;
 			if (checkListOperationTaskDetailsList.isEmpty()) {
 				checkListOperationTaskDetails = new CheckListOperationTaskDetails();

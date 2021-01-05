@@ -66,7 +66,7 @@ public class WebConfiguration implements WebMvcConfigurer {
 	    excludeApis.add("/**/webjars/springfox-swagger-ui/**");
 	    excludeApis.add("/**/swagger-resources/**");
 	    excludeApis.add("/**/v2/api-docs/**");    
-	    registry.addInterceptor(crudRequestInterceptor).addPathPatterns("/**").excludePathPatterns(excludeApis);
+	   // registry.addInterceptor(crudRequestInterceptor).addPathPatterns("/**").excludePathPatterns(excludeApis);
 		
 	}
 	
