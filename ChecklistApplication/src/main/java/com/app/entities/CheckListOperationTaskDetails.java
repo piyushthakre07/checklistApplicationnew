@@ -52,13 +52,13 @@ public class CheckListOperationTaskDetails extends AuditMaster implements Serial
 	private Date checkListDate;
 	
 	@Column(name = "owner_check")
-	private boolean ownerCheck;
+	private Boolean ownerCheck;
 	
 	@Column(name = "user_check")
-	private boolean userCheck;
+	private Boolean userCheck;
 	
 	@Column(name = "is_user")
-	private boolean is_user;
+	private Boolean is_user;
 
 	@Column(name = "faultRemark")
 	private String faultRemark;
