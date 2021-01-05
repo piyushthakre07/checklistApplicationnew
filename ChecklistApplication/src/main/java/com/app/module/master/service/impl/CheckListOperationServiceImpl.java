@@ -380,10 +380,14 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 									roomResponseBean.setOwnerChecked(checkListOperationTaskDetails.getOwnerCheck());
 									roomResponseBean.setUserChecked(checkListOperationTaskDetails.getUserCheck());
 
-									if (checkListOperationTaskDetails.getOwnerCheck()!=null && checkListOperationTaskDetails.getFaultOwner() &&  !checkListOperationTaskDetails.getOwnerCheck()
+									if (checkListOperationTaskDetails.getOwnerCheck() != null
+											&& checkListOperationTaskDetails.getFaultOwner() != null
+											&& !checkListOperationTaskDetails.getOwnerCheck()
 											&& checkListOperationTaskDetails.getFaultOwner())
 										roomResponseBean.setOwnerChecked(false);
-									if (checkListOperationTaskDetails.getUserCheck()!=null && checkListOperationTaskDetails.getFaultUser()!=null && !checkListOperationTaskDetails.getUserCheck()
+									if (checkListOperationTaskDetails.getUserCheck() != null
+											&& checkListOperationTaskDetails.getFaultUser() != null
+											&& !checkListOperationTaskDetails.getUserCheck()
 											&& checkListOperationTaskDetails.getFaultUser())
 										roomResponseBean.setUserChecked(false);
 
