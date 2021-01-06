@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.app.beans.ResponseBean;
 import com.app.beans.UserLoginBean;
+import com.app.beans.UserLoginResponseBean;
 import com.app.constant.MessageConstant;
 import com.app.entities.UserLogin;
 import com.app.exception.CheckListAppException;
@@ -80,8 +81,10 @@ public class UserLoginServiceImpl implements IUserLoginService {
 			String token = randomAlphaNumeric(30);
 			userLogin.setToken(token);
 			UserLoginDao.save(userLogin);
+			UserLoginResponseBean userLoginResponseBean=new UserLoginResponseBean();
+			BeanUtils.copyProperties(userLogin, userLoginResponseBean);
 			return ResponseBean.builder()
-					.data(userLogin.getToken()).status(true)
+					.data(userLoginResponseBean).status(true)
 					.hasError(false).message(MessageConstant.SUCCESS_MESSAGE).build();
 		} catch (Exception e) {
 			throw new CheckListAppException(CheckListAppException.SERVER_ERROR, MessageConstant.SERVER_ERROR_MESSAGE,
