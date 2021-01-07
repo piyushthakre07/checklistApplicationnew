@@ -554,7 +554,11 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 					RoomBean room = new RoomBean();
 					BeanUtils.copyProperties(checkListOperationTaskDetails.getRoom(), room);
 					checkListOperationTaskResponseBean.setRoom(room);
-
+					
+					checkListOperationTaskResponseBean.setUserChecked(checkListOperationTaskDetails.getUserCheck());
+					checkListOperationTaskResponseBean.setOwnerChecked(checkListOperationTaskDetails.getOwnerCheck());
+					checkListOperationTaskResponseBean.setFaultUser(checkListOperationTaskDetails.getFaultUser());
+					checkListOperationTaskResponseBean.setFaultOwner(checkListOperationTaskDetails.getFaultOwner());
 					try {
 						List<AssignWorkToContractorResponseBean> list = assignWorkToContractorService
 								.getAssignWorkToContractorByFlatIdNWorkType(checkListOperation.getFlat().getFlatId(),

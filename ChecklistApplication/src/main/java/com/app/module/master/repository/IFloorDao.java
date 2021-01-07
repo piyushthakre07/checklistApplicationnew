@@ -13,7 +13,7 @@ import com.app.entities.Floor;
  */
 public interface IFloorDao extends JpaRepository<Floor, Long> {
 
-	@Query("select floor from Floor floor where active=true and floor.project.active=true and floor.building.active=true")
+	@Query("select floor from Floor floor where active=true")
 	List<Floor> getActiveFloors();
 
 	@Query("select floor from Floor floor where active=true and floor.project.active=true and floor.building.active=true and floor.building.buildingId=?1")
