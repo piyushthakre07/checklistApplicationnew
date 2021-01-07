@@ -15,14 +15,17 @@ public class CheckListOperationTaskResponseBean {
 
 	private ContractorBean contractor;
 
-	private boolean check;
-
-	private boolean fault;
-
 	private Date checkListDate;
 
-	private boolean is_owner;
+	private Boolean ownerChecked;
 
-	private boolean is_user;
+	private Boolean userChecked;
+
+	private Boolean faultOwner;
+
+	private Boolean faultUser;
+	
+	private String faultRemark;
+	
 
 }
