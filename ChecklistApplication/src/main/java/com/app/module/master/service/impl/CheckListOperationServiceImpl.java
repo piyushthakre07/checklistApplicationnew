@@ -151,9 +151,9 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 			}
 			BeanUtils.copyProperties(taskDetail, checkListOperationTaskDetails);
 			if (checkListOperationBean.is_owner())
-				checkListOperationTaskDetails.setFaultOwner(true);
+				checkListOperationTaskDetails.setOwnerCheck(true);
 			else
-				checkListOperationTaskDetails.setFaultUser(true);
+				checkListOperationTaskDetails.setUserCheck(true);
 			checkListOperationTaskDetailsDao.save(checkListOperationTaskDetails);
 		});
 
@@ -220,11 +220,6 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 			checkListOperationTaskDetails.setFaultOwner(true);
 		else
 			checkListOperationTaskDetails.setFaultUser(true);
-
-		if (checkListOperationDefectRequestBean.isOwner())
-			checkListOperationTaskDetails.setOwnerCheck(false);
-		else
-			checkListOperationTaskDetails.setUserCheck(false);
 
 		checkListOperationTaskDetails.setFaultRemark(checkListOperationDefectRequestBean.getFaultRemark());
 
