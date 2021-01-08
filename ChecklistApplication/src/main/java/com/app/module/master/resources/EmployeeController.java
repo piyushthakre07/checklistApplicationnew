@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.app.beans.AproveEmployeeRequestBean;
 import com.app.beans.EmployeeBean;
 import com.app.beans.ResponseBean;
 import com.app.exception.CheckListAppException;
@@ -50,8 +51,8 @@ public class EmployeeController {
 	
 	@ApiOperation(value = "approve employee by admin", response = ResponseEntity.class)
 	@PutMapping(value = "/approveEmployee", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> approveEmployee(@Valid @RequestBody EmployeeBean employeeBean) throws CheckListAppException {
-		ResponseBean responseBean = employeeService.approveEmployee(employeeBean);
+	public ResponseEntity<Object> approveEmployee( @RequestBody AproveEmployeeRequestBean aproveEmployeeRequestBean) throws CheckListAppException {
+		ResponseBean responseBean = employeeService.approveEmployee(aproveEmployeeRequestBean);
 		return new ResponseEntity<Object>(responseBean, HttpStatus.OK);
 	}
 

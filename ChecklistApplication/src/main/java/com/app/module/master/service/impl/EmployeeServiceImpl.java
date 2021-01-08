@@ -8,15 +8,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import com.app.beans.AproveEmployeeRequestBean;
 import com.app.beans.EmployeeBean;
 import com.app.beans.ResponseBean;
 import com.app.constant.MessageConstant;
 import com.app.entities.Employee;
 import com.app.entities.UserLogin;
 import com.app.exception.CheckListAppException;
+import com.app.module.master.repository.IEmployeeDao;
 import com.app.module.master.repository.IFlatDao;
 import com.app.module.master.repository.IUserLoginDao;
-import com.app.module.master.repository.IEmployeeDao;
 import com.app.module.master.service.IEmployeeService;
 
 /**
@@ -51,7 +52,7 @@ public class EmployeeServiceImpl implements IEmployeeService {
 	}
 	
 	@Override
-	public ResponseBean approveEmployee(EmployeeBean employeeBean) throws CheckListAppException {
+	public ResponseBean approveEmployee(AproveEmployeeRequestBean employeeBean) throws CheckListAppException {
 		Employee employee = employeeDao.getEmployeeByEmployeeId(employeeBean.getEmployeeId()).get(0);
 		if (employee != null) {
 			employee.setActive(true);
