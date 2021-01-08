@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import com.app.beans.ApproveOwnerRequestBean;
 import com.app.beans.OwnerBean;
 import com.app.beans.ResponseBean;
 import com.app.constant.MessageConstant;
@@ -51,14 +52,19 @@ public class OwnerServiceImpl implements IOwnerService {
 	}
 	
 	@Override
-	public ResponseBean approveOwner(OwnerBean ownerBean) throws CheckListAppException {
-		Owner owner = new Owner();
-		BeanUtils.copyProperties(ownerBean, owner);
+	public ResponseBean approveOwner(ApproveOwnerRequestBean ownerBean) throws CheckListAppException {
+		Owner owner = ownerDao.getOwnerByOwnerId(ownerBean.getOwnerId()).get(0);
+		if(owner!=null) {
 		owner.setActive(true);
 		ownerDao.save(owner);
+		}
+		else {
+			throw new CheckListAppException(CheckListAppException.SERVER_ERROR, MessageConstant.OWNER_NOT_FOUND,
+					MessageConstant.OWNER_NOT_FOUND);
+		}
 		return ResponseBean.builder().message(MessageConstant.DATA_SAVE_SUCCESS)
 				.messageDescription(MessageConstant.OWNER_APPROVE_SUCCESS_MESSAGE).status(true)
-				.satusCode(HttpStatus.CREATED.value()).hasError(false).build();
+				.satusCode(HttpStatus.OK.value()).hasError(false).build();
 	}
 
 	@Override

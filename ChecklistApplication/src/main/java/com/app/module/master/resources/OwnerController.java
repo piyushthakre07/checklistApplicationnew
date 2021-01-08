@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.app.beans.ApproveOwnerRequestBean;
 import com.app.beans.OwnerBean;
 import com.app.beans.ResponseBean;
 import com.app.exception.CheckListAppException;
@@ -50,8 +51,8 @@ public class OwnerController {
 	
 	@ApiOperation(value = "approve owner by admin", response = ResponseEntity.class)
 	@PutMapping(value = "/approveOwner", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> approveOwner(@Valid @RequestBody OwnerBean ownerBean) throws CheckListAppException {
-		ResponseBean responseBean = ownerService.approveOwner(ownerBean);
+	public ResponseEntity<Object> approveOwner(@RequestBody ApproveOwnerRequestBean approveOwnerRequestBean) throws CheckListAppException {
+		ResponseBean responseBean = ownerService.approveOwner(approveOwnerRequestBean);
 		return new ResponseEntity<Object>(responseBean, HttpStatus.OK);
 	}
 

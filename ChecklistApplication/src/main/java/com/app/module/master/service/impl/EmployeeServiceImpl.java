@@ -52,13 +52,17 @@ public class EmployeeServiceImpl implements IEmployeeService {
 	
 	@Override
 	public ResponseBean approveEmployee(EmployeeBean employeeBean) throws CheckListAppException {
-		Employee employee = new Employee();
-		BeanUtils.copyProperties(employeeBean, employee);
-		employee.setActive(true);
-		employeeDao.save(employee);
+		Employee employee = employeeDao.getEmployeeByEmployeeId(employeeBean.getEmployeeId()).get(0);
+		if (employee != null) {
+			employee.setActive(true);
+			employeeDao.save(employee);
+		}else {
+			throw new CheckListAppException(CheckListAppException.SERVER_ERROR, MessageConstant.EMPLOYEE_NOT_FOUND,
+					MessageConstant.EMPLOYEE_NOT_FOUND);
+		}
 		return ResponseBean.builder().message(MessageConstant.DATA_SAVE_SUCCESS)
 				.messageDescription(MessageConstant.OWNER_APPROVE_SUCCESS_MESSAGE).status(true)
-				.satusCode(HttpStatus.CREATED.value()).hasError(false).build();
+				.satusCode(HttpStatus.OK.value()).hasError(false).build();
 	}
 
 	@Override

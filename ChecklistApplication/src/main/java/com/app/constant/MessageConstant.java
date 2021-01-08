@@ -32,4 +32,7 @@ public class MessageConstant {
 	public static String TASK_SAVE_SUCCESS_MESSAGE = "Successfully added task.";
 	public static String WORK_TYPE_SAVE_SUCCESS_MESSAGE = "successfully added work type.";
 	
+	public static String EMPLOYEE_NOT_FOUND = "Employee not exist";
+	public static String OWNER_NOT_FOUND = "Owner not exist";
+	
 }
