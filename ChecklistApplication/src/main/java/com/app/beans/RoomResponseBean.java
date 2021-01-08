@@ -22,5 +22,9 @@ public class RoomResponseBean {
 	private Boolean faultOwner;
 
 	private Boolean faultUser;
- 
+	
+	private String faultUserRemark;
+
+	private String faultOwnerRemark;
+
 }

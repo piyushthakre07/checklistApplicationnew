@@ -57,8 +57,11 @@ public class CheckListOperationTaskDetails extends AuditMaster implements Serial
 	@Column(name = "user_check")
 	private Boolean userCheck;
 
-	@Column(name = "faultRemark")
-	private String faultRemark;
+	@Column(name = "fault_user_remark")
+	private String faultUserRemark;
+
+	@Column(name = "fault_owner_remark")
+	private String faultOwnerRemark;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "check_list_operation_id")

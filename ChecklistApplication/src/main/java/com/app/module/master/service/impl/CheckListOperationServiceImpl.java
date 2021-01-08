@@ -221,7 +221,10 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 		else
 			checkListOperationTaskDetails.setFaultUser(true);
 
-		checkListOperationTaskDetails.setFaultRemark(checkListOperationDefectRequestBean.getFaultRemark());
+		if(checkListOperationDefectRequestBean.isOwner())
+			checkListOperationTaskDetails.setFaultOwnerRemark(checkListOperationDefectRequestBean.getFaultRemark());
+		else 
+		checkListOperationTaskDetails.setFaultUserRemark(checkListOperationDefectRequestBean.getFaultRemark());
 
 		checkListOperationTaskDetails.setCheckListOperation(checkListOperation);
 		checkListOperationTaskDetailsDao.save(checkListOperationTaskDetails);
@@ -371,10 +374,10 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 										&& !checkListOperationTaskDetailsList.isEmpty()) {
 									CheckListOperationTaskDetails checkListOperationTaskDetails = checkListOperationTaskDetailsList
 											.get(0);
+									BeanUtils.copyProperties(checkListOperationTaskDetails, roomResponseBean);
 									roomResponseBean.setRoomId(checkListOperationTaskDetails.getRoom().getRoomId());
 									roomResponseBean.setOwnerChecked(checkListOperationTaskDetails.getOwnerCheck());
 									roomResponseBean.setUserChecked(checkListOperationTaskDetails.getUserCheck());
-
 									if ((checkListOperationTaskDetails.getOwnerCheck() == null)
 											|| (!checkListOperationTaskDetails.getOwnerCheck()))
 										roomResponseBean.setFaultOwner(checkListOperationTaskDetails.getFaultOwner());
