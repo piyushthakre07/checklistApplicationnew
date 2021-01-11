@@ -233,22 +233,22 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 			room.setRoomId(checkListOperationDefectRequestBean.getRoomId());
 			checkListOperationTaskDetails.setRoom(room);
 
-			if (checkListOperationDefectRequestBean.isOwner())
-				checkListOperationTaskDetails.setFaultOwner(true);
-			else
-				checkListOperationTaskDetails.setFaultUser(true);
-
-			if (checkListOperationDefectRequestBean.isOwner())
-				checkListOperationTaskDetails.setFaultOwnerRemark(checkListOperationDefectRequestBean.getFaultRemark());
-			else
-				checkListOperationTaskDetails.setFaultUserRemark(checkListOperationDefectRequestBean.getFaultRemark());
-
-			checkListOperationTaskDetails.setCheckListOperation(checkListOperation);
-
 		} else {
 			checkListOperationTaskDetails = checkListOperationTaskDetailsList.get(0);
 
 		}
+		if (checkListOperationDefectRequestBean.isOwner())
+			checkListOperationTaskDetails.setFaultOwner(true);
+		else
+			checkListOperationTaskDetails.setFaultUser(true);
+
+		if (checkListOperationDefectRequestBean.isOwner())
+			checkListOperationTaskDetails.setFaultOwnerRemark(checkListOperationDefectRequestBean.getFaultRemark());
+		else
+			checkListOperationTaskDetails.setFaultUserRemark(checkListOperationDefectRequestBean.getFaultRemark());
+
+		checkListOperationTaskDetails.setCheckListOperation(checkListOperation);
+
 		checkListOperationTaskDetailsDao.save(checkListOperationTaskDetails);
 
 		if (checkListOperationDefectRequestBean.getUploadImages() != null) {
