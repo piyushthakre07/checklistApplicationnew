@@ -21,7 +21,10 @@ public interface IFloorDao extends JpaRepository<Floor, Long> {
 
 	@Query("select floor from Floor floor where floor.floorId=?1 ")
 	List<Floor> getFloorByFloorId(Long floorId);
-	
+
 	@Query("select floor from Floor floor where floor.floorId IN :floorIds ")
 	List<Floor> getFloorsByFloorId(List<Long> floorIds);
+
+	@Query("select floor from Floor floor where floor.floorId IN :floorIds and floor.building.buildingId=:buildingId ")
+	List<Floor> getFloorsByFloorIdAndBuildingId(List<Long> floorIds, Long buildingId);
 }

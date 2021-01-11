@@ -37,5 +37,4 @@ public class CheckListOperationDefectRequestBean {
  
 	private boolean isOwner;
 
-	private boolean isUser;
 }

@@ -141,7 +141,7 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 			}
 
 			List<CheckListOperationTaskDetails> checkListOperationTaskDetailsList = checkListOperationTaskDetailsDao
-					.getCheckListOperationTaskDetailsByTaskIdNRoomIdNCheckListOperationIdNIsOwner(
+					.getCheckListOperationTaskDetailsByTaskIdNRoomIdNCheckListOperationId(
 							checkListOperationBean.getTaskId(), taskDetail.getRoomId(),
 							checkListOperation.getCheckListOperationId());
 			CheckListOperationTaskDetails checkListOperationTaskDetails = null;
@@ -214,42 +214,53 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 		} else {
 			checkListOperation = checkListOperationList.get(0);
 		}
-		CheckListOperationTaskDetails checkListOperationTaskDetails = new CheckListOperationTaskDetails();
-		BeanUtils.copyProperties(checkListOperationDefectRequestBean, checkListOperationTaskDetails);
 
-		Task task = new Task();
-		task.setTaskId(checkListOperationDefectRequestBean.getTaskId());
-		checkListOperationTaskDetails.setTask(task);
+		List<CheckListOperationTaskDetails> checkListOperationTaskDetailsList = checkListOperationTaskDetailsDao
+				.getCheckListOperationTaskDetailsByTaskIdNRoomIdNCheckListOperationId(
+						checkListOperationDefectRequestBean.getTaskId(),
+						checkListOperationDefectRequestBean.getRoomId(), checkListOperation.getCheckListOperationId());
+		CheckListOperationTaskDetails checkListOperationTaskDetails = null;
+		if (checkListOperationTaskDetailsList == null || checkListOperationTaskDetailsList.isEmpty()) {
 
-		Room room = new Room();
-		room.setRoomId(checkListOperationDefectRequestBean.getRoomId());
-		checkListOperationTaskDetails.setRoom(room);
+			checkListOperationTaskDetails = new CheckListOperationTaskDetails();
+			BeanUtils.copyProperties(checkListOperationDefectRequestBean, checkListOperationTaskDetails);
 
-		if (checkListOperationDefectRequestBean.isOwner())
-			checkListOperationTaskDetails.setFaultOwner(true);
-		else
-			checkListOperationTaskDetails.setFaultUser(true);
+			Task task = new Task();
+			task.setTaskId(checkListOperationDefectRequestBean.getTaskId());
+			checkListOperationTaskDetails.setTask(task);
 
-		if (checkListOperationDefectRequestBean.isOwner())
-			checkListOperationTaskDetails.setFaultOwnerRemark(checkListOperationDefectRequestBean.getFaultRemark());
-		else
-			checkListOperationTaskDetails.setFaultUserRemark(checkListOperationDefectRequestBean.getFaultRemark());
+			Room room = new Room();
+			room.setRoomId(checkListOperationDefectRequestBean.getRoomId());
+			checkListOperationTaskDetails.setRoom(room);
 
-		checkListOperationTaskDetails.setCheckListOperation(checkListOperation);
+			if (checkListOperationDefectRequestBean.isOwner())
+				checkListOperationTaskDetails.setFaultOwner(true);
+			else
+				checkListOperationTaskDetails.setFaultUser(true);
+
+			if (checkListOperationDefectRequestBean.isOwner())
+				checkListOperationTaskDetails.setFaultOwnerRemark(checkListOperationDefectRequestBean.getFaultRemark());
+			else
+				checkListOperationTaskDetails.setFaultUserRemark(checkListOperationDefectRequestBean.getFaultRemark());
+
+			checkListOperationTaskDetails.setCheckListOperation(checkListOperation);
+
+		} else {
+			checkListOperationTaskDetails = checkListOperationTaskDetailsList.get(0);
+
+		}
 		checkListOperationTaskDetailsDao.save(checkListOperationTaskDetails);
 
 		if (checkListOperationDefectRequestBean.getUploadImages() != null) {
 
-			Arrays.asList(checkListOperationDefectRequestBean.getUploadImages()).stream().forEach(file -> {
+			for (MultipartFile file : checkListOperationDefectRequestBean.getUploadImages()) {
 				CheckListOperationDefectImageUpload checkListOperationDefectImageUpload = new CheckListOperationDefectImageUpload();
 				String fileName = file.getOriginalFilename();
 				checkListOperationDefectImageUpload.setName(fileName);
 				checkListOperationDefectImageUpload.setType(file.getContentType());
-
 				try {
-
-					String dir = checkListOperationDefectRequestBean.getFlatId()+""
-							+ checkListOperationDefectRequestBean.getRoomId()+""
+					String dir = checkListOperationDefectRequestBean.getFlatId() + ""
+							+ checkListOperationDefectRequestBean.getRoomId() + ""
 							+ checkListOperationDefectRequestBean.getTaskId() + "";
 					String path = defectBaseFileStrorePath + dir;
 					saveFile(path, fileName, file);
@@ -259,7 +270,7 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-			});
+			}
 		}
 
 		return ResponseBean.builder().message(MessageConstant.DATA_SAVE_SUCCESS)
@@ -323,17 +334,19 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 	}
 
 	@Override
-	public List<ByteArrayResource> getDefectCheckListOperationByFlatIdAndWorTypeAndTaskIdAndRoomId(
-			Long flatId, Long workTypeId, Long taskId, Long roomId) throws CheckListAppException {
+	public List<ByteArrayResource> getDefectCheckListOperationByFlatIdAndWorTypeAndTaskIdAndRoomId(Long flatId,
+			Long workTypeId, Long taskId, Long roomId) throws CheckListAppException {
 		try {
-			
-			List<CheckListOperationDefectImageUploadResponseBean> list=getImageFromCheckListOperation(checkListOperationDefectImageUploadDao
-					.getCheckListOperationDefectImageUploadByFlatIdAndAndWorTypeAndTaskId(flatId, workTypeId, taskId,
-							roomId),
+
+			List<CheckListOperationDefectImageUploadResponseBean> list = getImageFromCheckListOperation(
+					checkListOperationDefectImageUploadDao
+							.getCheckListOperationDefectImageUploadByFlatIdAndAndWorTypeAndTaskId(flatId, workTypeId,
+									taskId, roomId),
 					taskId, roomId);
-			List<ByteArrayResource> byteArrayResourceList=new ArrayList<ByteArrayResource>();
-			for(CheckListOperationDefectImageUploadResponseBean checkListOperationDefectImageUploadResponseBean: list) {
-				ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(Paths.get(checkListOperationDefectImageUploadResponseBean.getImageName())));
+			List<ByteArrayResource> byteArrayResourceList = new ArrayList<ByteArrayResource>();
+			for (CheckListOperationDefectImageUploadResponseBean checkListOperationDefectImageUploadResponseBean : list) {
+				ByteArrayResource resource = new ByteArrayResource(
+						Files.readAllBytes(Paths.get(checkListOperationDefectImageUploadResponseBean.getImageName())));
 			}
 			return byteArrayResourceList;
 		} catch (Exception e) {

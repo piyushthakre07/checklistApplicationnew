@@ -14,11 +14,14 @@ import com.app.beans.FloorBean;
 import com.app.beans.FloorRequestBean;
 import com.app.beans.ProjectBean;
 import com.app.beans.ResponseBean;
+import com.app.beans.UserLoginRequestScopeBean;
+import com.app.constant.GenericConstant;
 import com.app.constant.MessageConstant;
 import com.app.entities.Building;
 import com.app.entities.Floor;
 import com.app.entities.Project;
 import com.app.exception.CheckListAppException;
+import com.app.module.master.repository.IAssignFlatToOwnerDao;
 import com.app.module.master.repository.IFloorDao;
 import com.app.module.master.service.IFloorService;
 
@@ -29,15 +32,16 @@ import com.app.module.master.service.IFloorService;
 @Service
 public class FloorServiceImpl implements IFloorService {
 
-	/*
-	 * @Autowired IFloorValidation floorValidation;
-	 */
-
 	@Autowired
 	IFloorDao floorDao;
 
+	@Autowired
+	UserLoginRequestScopeBean userLoginRequestScopeBean;
+
+	@Autowired
+	IAssignFlatToOwnerDao assignFlatToOwnerDao;
+
 	@Override
-		// floorValidation.checkDuplicateFloor(floorBean);
 	public ResponseBean insertOrUpdateFloor(FloorBean floorBean) throws CheckListAppException {
 		Floor floor = new Floor();
 		BeanUtils.copyProperties(floorBean, floor);
@@ -55,14 +59,12 @@ public class FloorServiceImpl implements IFloorService {
 
 	@Override
 	public ResponseBean insertMultipleFloor(FloorRequestBean floorRequestBean) throws CheckListAppException {
-		// floorValidation.checkDuplicateFloor(floorBean);
 		try {
 			floorRequestBean.getFloorBeanList().forEach(floorBean -> {
 				Floor floor = new Floor();
 				floor.setFloorName(floorBean.getFloorName());
 				floor.setActive(floorBean.isActive());
 				floor.setDescription(floorBean.getDescription());
-				//BeanUtils.copyProperties(floorBean, floor);
 				Project project = new Project();
 				project.setProjectId(floorRequestBean.getProjectId());
 				floor.setProject(project);
@@ -83,6 +85,11 @@ public class FloorServiceImpl implements IFloorService {
 	@Override
 	public ResponseBean getActiveFloors() throws CheckListAppException {
 		try {
+			if (userLoginRequestScopeBean != null && userLoginRequestScopeBean.getUserType() != null
+					&& userLoginRequestScopeBean.getUserType().equals(GenericConstant.OWNER)) {
+				return ResponseBean.builder().data(prepareBuildingBean()).status(true).hasError(false)
+						.message(MessageConstant.SUCCESS_MESSAGE).build();
+			}
 			return ResponseBean.builder().data(prepareFloorBeansFromFloor(floorDao.getActiveFloors())).status(true)
 					.hasError(false).message(MessageConstant.SUCCESS_MESSAGE).build();
 		} catch (Exception e) {
@@ -107,6 +114,11 @@ public class FloorServiceImpl implements IFloorService {
 		try {
 			if (Objects.isNull(buildingId) || buildingId == 0) {
 				return getActiveFloors();
+			}
+			if (userLoginRequestScopeBean != null && userLoginRequestScopeBean.getUserType() != null
+					&& userLoginRequestScopeBean.getUserType().equals(GenericConstant.OWNER)) {
+				return ResponseBean.builder().data(prepareFloorBean(buildingId)).status(true).hasError(false)
+						.message(MessageConstant.SUCCESS_MESSAGE).build();
 			}
 			return ResponseBean.builder()
 					.data(prepareFloorBeansFromFloor(floorDao.getActiveFloorsBybuildingId(buildingId))).status(true)
@@ -144,5 +156,23 @@ public class FloorServiceImpl implements IFloorService {
 			floorBeans.add(floorBean);
 		});
 		return floorBeans;
+	}
+
+	private List<FloorBean> prepareBuildingBean() {
+		List<Long> floorIds = assignFlatToOwnerDao
+				.getFloorIdByOwnerId(userLoginRequestScopeBean.getOwner().getOwnerId());
+		if (floorIds != null && !floorIds.isEmpty())
+			return prepareFloorBeansFromFloor(floorDao.getFloorsByFloorId(floorIds));
+		else
+			return null;
+	}
+	
+	private List<FloorBean> prepareFloorBean(Long buildingId) {
+		List<Long> floorIds = assignFlatToOwnerDao
+				.getFloorIdByOwnerId(userLoginRequestScopeBean.getOwner().getOwnerId());
+		if (floorIds != null && !floorIds.isEmpty())
+			return prepareFloorBeansFromFloor(floorDao.getFloorsByFloorIdAndBuildingId(floorIds, buildingId));
+		else
+			return null;
 	}
 }

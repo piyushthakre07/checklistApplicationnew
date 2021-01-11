@@ -21,7 +21,7 @@ public interface ICheckListOperationTaskDetailsDao extends JpaRepository<CheckLi
 			@Param("roomId") Long roomId);
 
 	@Query("select checkListOperationTaskDetails from CheckListOperationTaskDetails checkListOperationTaskDetails where checkListOperationTaskDetails.task.taskId= :taskId and checkListOperationTaskDetails.room.roomId= :roomId and checkListOperationTaskDetails.checkListOperation.checkListOperationId= :checkListOperationId")
-	List<CheckListOperationTaskDetails> getCheckListOperationTaskDetailsByTaskIdNRoomIdNCheckListOperationIdNIsOwner(
+	List<CheckListOperationTaskDetails> getCheckListOperationTaskDetailsByTaskIdNRoomIdNCheckListOperationId(
 			@Param("taskId") Long taskId, @Param("roomId") Long roomId,
 			@Param("checkListOperationId") Long checkListOperationId);
 	

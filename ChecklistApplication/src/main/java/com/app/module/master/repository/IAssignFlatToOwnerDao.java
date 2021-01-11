@@ -34,5 +34,6 @@ public interface IAssignFlatToOwnerDao extends JpaRepository<AssignFlatToOwner, 
 	
 	@Query("select assignFlatToOwner.flat.floor.floorId from AssignFlatToOwner assignFlatToOwner where assignFlatToOwner.owner.ownerId=?1 ")
 	List<Long> getFloorIdByOwnerId(Long ownerId);
+	
 
 }
