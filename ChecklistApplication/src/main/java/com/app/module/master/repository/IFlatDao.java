@@ -23,5 +23,16 @@ public interface IFlatDao extends JpaRepository<Flat, Long> {
 	
 	@Query("select flat from Flat flat where flat.flatType.flatTypeId=?1 ")
 	List<Flat> getFlatByFlatTypeId(Long flatTypeId);
+	
+	@Query("select flat from Flat flat where flat.flatId IN :flatIds ")
+	List<Flat> getFlatByFlatIdList(List<Long> flatIds);
+	
+	@Query("select flat from Flat flat where flat.flatId IN :flatIds and flat.floor.floorId=:floorId and active=true")
+	List<Flat> getFlatByFlatIdList(List<Long> flatIds,Long floorId);
+	
+	@Query("select flat from Flat flat where flat.flatId IN :flatIds and flat.building.buildingId=:buildingId and active=true")
+	List<Flat> prepareFlatBeanForOwnersByBuildingId(List<Long> flatIds,Long buildingId);
+	
+	
 
 }

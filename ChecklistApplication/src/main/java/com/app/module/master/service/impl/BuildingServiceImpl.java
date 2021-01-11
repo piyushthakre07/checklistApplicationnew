@@ -13,10 +13,13 @@ import com.app.beans.BuildingBean;
 import com.app.beans.BuildingRequestBean;
 import com.app.beans.ProjectBean;
 import com.app.beans.ResponseBean;
+import com.app.beans.UserLoginRequestScopeBean;
+import com.app.constant.GenericConstant;
 import com.app.constant.MessageConstant;
 import com.app.entities.Building;
 import com.app.entities.Project;
 import com.app.exception.CheckListAppException;
+import com.app.module.master.repository.IAssignFlatToOwnerDao;
 import com.app.module.master.repository.IBuildingDao;
 import com.app.module.master.service.IBuildingService;
 
@@ -34,6 +37,12 @@ public class BuildingServiceImpl implements IBuildingService {
 
 	@Autowired
 	IBuildingDao buildingDao;
+	
+	@Autowired
+	UserLoginRequestScopeBean userLoginRequestScopeBean;
+
+	@Autowired
+	IAssignFlatToOwnerDao assignFlatToOwnerDao;
 
 	@Override
 	public ResponseBean insertOrUpdateBuilding(BuildingBean buildingBean) throws CheckListAppException {
@@ -73,6 +82,12 @@ public class BuildingServiceImpl implements IBuildingService {
 	@Override
 	public ResponseBean getActiveBuildings() throws CheckListAppException {
 		try {
+			
+			if (userLoginRequestScopeBean != null && userLoginRequestScopeBean.getUserType() != null
+					&& userLoginRequestScopeBean.getUserType().equals(GenericConstant.OWNER)) {
+				return ResponseBean.builder().data(prepareBuildingBean())
+						.status(true).hasError(false).message(MessageConstant.SUCCESS_MESSAGE).build();
+			}
 			return ResponseBean.builder().data(prepareBuildingBeansFromBuilding(buildingDao.getActiveBuildings()))
 					.status(true).hasError(false).message(MessageConstant.SUCCESS_MESSAGE).build();
 		} catch (Exception e) {
@@ -97,6 +112,12 @@ public class BuildingServiceImpl implements IBuildingService {
 		try {
 			if (Objects.isNull(projectId) || projectId == 0) {
 				return getActiveBuildings();
+			}
+			if (userLoginRequestScopeBean != null && userLoginRequestScopeBean.getUserType() != null
+					&& userLoginRequestScopeBean.getUserType().equals(GenericConstant.OWNER)) {
+				return ResponseBean.builder()
+						.data(prepareBuildingBean(projectId))
+						.status(true).hasError(false).message(MessageConstant.SUCCESS_MESSAGE).build();
 			}
 			return ResponseBean.builder()
 					.data(prepareBuildingBeansFromBuilding(buildingDao.getActiveBuildingsByProjectId(projectId)))
@@ -131,5 +152,23 @@ public class BuildingServiceImpl implements IBuildingService {
 			buildingBeans.add(buildingBean);
 		});
 		return buildingBeans;
+	}
+	
+	private List<BuildingBean> prepareBuildingBean() {
+		List<Long> buildingIds = assignFlatToOwnerDao
+				.getBuildingIdByOwnerId(userLoginRequestScopeBean.getOwner().getOwnerId());
+		if (buildingIds != null && !buildingIds.isEmpty())
+			return prepareBuildingBeansFromBuilding(buildingDao.getBuildingByBuildingId(buildingIds));
+		else
+			return null;
+	}
+	
+	private List<BuildingBean> prepareBuildingBean(Long projectId) {
+		List<Long> buildingIds = assignFlatToOwnerDao
+				.getBuildingIdByOwnerId(userLoginRequestScopeBean.getOwner().getOwnerId());
+		if (buildingIds != null && !buildingIds.isEmpty())
+			return prepareBuildingBeansFromBuilding(buildingDao.getBuildingByBuildingId(buildingIds,projectId));
+		else
+			return null;
 	}
 }

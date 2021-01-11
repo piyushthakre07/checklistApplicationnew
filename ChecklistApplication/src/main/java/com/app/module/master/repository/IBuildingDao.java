@@ -21,4 +21,10 @@ public interface IBuildingDao  extends JpaRepository<Building, Long>{
 	
 	@Query("select building from Building building where building.buildingId=?1 ")
 	List<Building> getBuildingByBuildingId(Long buildingId);
+	
+	@Query("select building from Building building where building.buildingId IN :buildingIds ")
+	List<Building> getBuildingByBuildingId(List<Long> buildingIds);
+	
+	@Query("select building from Building building where building.buildingId IN :buildingIds and active=true and building.project.projectId=:projectId")
+	List<Building> getBuildingByBuildingId(List<Long> buildingIds,Long projectId);
 }

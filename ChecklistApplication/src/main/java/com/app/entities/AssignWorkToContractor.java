@@ -1,7 +1,5 @@
 package com.app.entities;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -21,7 +19,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(name = "assign_work_to_contractor")
-public class AssignWorkToContractor extends AuditMaster implements Serializable {
+public class AssignWorkToContractor extends AuditMaster{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

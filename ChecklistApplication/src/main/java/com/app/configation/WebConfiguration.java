@@ -6,10 +6,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.context.annotation.RequestScope;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import com.app.beans.UserLoginRequestScopeBean;
 import com.app.interceptor.RequestInterceptor;
 
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -49,12 +51,12 @@ public class WebConfiguration implements WebMvcConfigurer {
     }
     @Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-    	registry.addResourceHandler("swagger-ui.html")
-    		.addResourceLocations("classpath:/META-INF/resources/");
-    	
-        registry.addResourceHandler("/webjars/**")
-                .addResourceLocations("classpath:/META-INF/resources/webjars/");
-    }
+		registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
+
+		registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+
+		registry.addResourceHandler("/images/**").addResourceLocations("file:/absolute/path/to/image/dir");
+	}
     
     @Override
 	public void addInterceptors(InterceptorRegistry registry) {
@@ -66,8 +68,14 @@ public class WebConfiguration implements WebMvcConfigurer {
 	    excludeApis.add("/**/webjars/springfox-swagger-ui/**");
 	    excludeApis.add("/**/swagger-resources/**");
 	    excludeApis.add("/**/v2/api-docs/**");    
-	   // registry.addInterceptor(crudRequestInterceptor).addPathPatterns("/**").excludePathPatterns(excludeApis);
+	   registry.addInterceptor(crudRequestInterceptor).addPathPatterns("/**").excludePathPatterns(excludeApis);
 		
 	}
-	
+    
+    
+    @Bean
+    @RequestScope
+    public UserLoginRequestScopeBean requestScopeUserLogin() {
+        return new UserLoginRequestScopeBean();
+    }
 }

@@ -7,5 +7,7 @@ public class GenericConstant {
 	public static String MOBILE_NUMBER_VALIDATION_REG_EXP = "(0/91)?[0-9][0-9]{9}";
 	public static final String TOKEN = "token";
 	public static final String USERNAME="username";
+	public static final String OWNER="OWNER";
+	
 	
 }

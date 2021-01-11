@@ -18,11 +18,8 @@ import com.app.beans.ProjectBean;
 import com.app.beans.ResponseBean;
 import com.app.constant.MessageConstant;
 import com.app.entities.AssignFlatToOwner;
-import com.app.entities.Building;
 import com.app.entities.Flat;
-import com.app.entities.Floor;
 import com.app.entities.Owner;
-import com.app.entities.Project;
 import com.app.exception.CheckListAppException;
 import com.app.module.master.repository.IAssignFlatToOwnerDao;
 import com.app.module.master.service.IAssignFlatToOwnerService;
@@ -47,17 +44,16 @@ public class AssignFlatToOwnerServiceImpl implements IAssignFlatToOwnerService {
 		// assignFlatToOwnerValidation.checkDuplicateAssignFlatToOwner(assignFlatToOwnerBean);
 		AssignFlatToOwner assignFlatToOwner = new AssignFlatToOwner();
 		BeanUtils.copyProperties(assignFlatToOwnerBean, assignFlatToOwner);
-		Project project = new Project();
-		project.setProjectId(assignFlatToOwnerBean.getProjectId());
-		assignFlatToOwner.setProject(project);
-		Building building = new Building();
-		building.setBuildingId(assignFlatToOwnerBean.getBuildingId());
-		assignFlatToOwner.setBuilding(building);
-		Floor floor = new Floor();
-		if (assignFlatToOwnerBean.getFloorId() != null) {
-			floor.setFloorId(assignFlatToOwnerBean.getFloorId());
-			assignFlatToOwner.setFloor(floor);
-		}
+	//	Project project = new Project();
+		/*
+		 * project.setProjectId(assignFlatToOwnerBean.getProjectId());
+		 * assignFlatToOwner.setProject(project); Building building = new Building();
+		 * building.setBuildingId(assignFlatToOwnerBean.getBuildingId());
+		 * assignFlatToOwner.setBuilding(building); Floor floor = new Floor(); if
+		 * (assignFlatToOwnerBean.getFloorId() != null) {
+		 * floor.setFloorId(assignFlatToOwnerBean.getFloorId());
+		 * assignFlatToOwner.setFloor(floor); }
+		 */
 		Flat flat = new Flat();
 		flat.setFlatId(assignFlatToOwnerBean.getFlatId());
 		assignFlatToOwner.setFlat(flat);
@@ -125,14 +121,14 @@ public class AssignFlatToOwnerServiceImpl implements IAssignFlatToOwnerService {
 			AssignFlatToOwnerResponseBean assignFlatToOwnerResponseBean = new AssignFlatToOwnerResponseBean();
 			BeanUtils.copyProperties(assignFlatToOwner, assignFlatToOwnerResponseBean);
 			ProjectBean projectBean = new ProjectBean();
-			BeanUtils.copyProperties(assignFlatToOwner.getProject(), projectBean);
+			BeanUtils.copyProperties(assignFlatToOwner.getFlat().getProject(), projectBean);
 			assignFlatToOwnerResponseBean.setProject(projectBean);
 			BuildingBean buildingBean = new BuildingBean();
-			BeanUtils.copyProperties(assignFlatToOwner.getBuilding(), buildingBean);
+			BeanUtils.copyProperties(assignFlatToOwner.getFlat().getBuilding(), buildingBean);
 			assignFlatToOwnerResponseBean.setBuilding(buildingBean);
 			FloorBean floorBean = new FloorBean();
-			if (assignFlatToOwner.getFloor() != null) {
-				BeanUtils.copyProperties(assignFlatToOwner.getFloor(), floorBean);
+			if (assignFlatToOwner.getFlat().getFloor() != null) {
+				BeanUtils.copyProperties(assignFlatToOwner.getFlat().getFloor(), floorBean);
 				assignFlatToOwnerResponseBean.setFloor(floorBean);
 			}
 			FlatBean flatBean = new FlatBean();

@@ -18,4 +18,7 @@ public interface IProjectDao extends JpaRepository<Project, Long> {
 
 	@Query("select project from Project project where project.projectId=?1 ")
 	List<Project> getProjectByProjectId(Long projectId);
+	
+	@Query("select project from Project project where project.projectId IN  :projectIds  ")
+	List<Project> getProjectByProjectIdList(List<Long> projectIds);
 }

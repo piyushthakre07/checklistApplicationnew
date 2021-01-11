@@ -77,6 +77,17 @@ public class OwnerServiceImpl implements IOwnerService {
 					MessageConstant.QUERY_FETCH_EXCPTION);
 		}
 	}
+	
+	@Override
+	public List<OwnerBean> getOwnersByLoginId(Long userLoginId) throws CheckListAppException {
+		try {
+			return prepareOwnersBeanFromOwners(ownerDao.getOwnerByLoginId(userLoginId));
+		} catch (Exception e) {
+			throw new CheckListAppException(CheckListAppException.SERVER_ERROR, MessageConstant.SERVER_ERROR_MESSAGE,
+					MessageConstant.QUERY_FETCH_EXCPTION);
+		}
+	}
+
 
 	@Override
 	public ResponseBean getOwners() throws CheckListAppException {

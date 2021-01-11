@@ -10,9 +10,12 @@ import org.springframework.stereotype.Service;
 
 import com.app.beans.ProjectBean;
 import com.app.beans.ResponseBean;
+import com.app.beans.UserLoginRequestScopeBean;
+import com.app.constant.GenericConstant;
 import com.app.constant.MessageConstant;
 import com.app.entities.Project;
 import com.app.exception.CheckListAppException;
+import com.app.module.master.repository.IAssignFlatToOwnerDao;
 import com.app.module.master.repository.IProjectDao;
 import com.app.module.master.service.IProjectService;
 import com.app.module.master.validation.IProjectValidation;
@@ -31,6 +34,12 @@ public class ProjectServiceImpl implements IProjectService {
 	@Autowired
 	IProjectDao projectDao;
 
+	@Autowired
+	UserLoginRequestScopeBean userLoginRequestScopeBean;
+
+	@Autowired
+	IAssignFlatToOwnerDao assignFlatToOwnerDao;
+
 	@Override
 	public ResponseBean insertOrUpdateProject(ProjectBean projectBean) throws CheckListAppException {
 		projectValidation.checkDuplicateProject(projectBean);
@@ -45,6 +54,12 @@ public class ProjectServiceImpl implements IProjectService {
 	@Override
 	public ResponseBean getActiveProjects() throws CheckListAppException {
 		try {
+			if (userLoginRequestScopeBean != null && userLoginRequestScopeBean.getUserType() != null
+					&& userLoginRequestScopeBean.getUserType().equals(GenericConstant.OWNER)) {
+				return ResponseBean.builder()
+						.data(prepareProjectsBeanFromProjectsForOwners()).status(true)
+						.hasError(false).message(MessageConstant.SUCCESS_MESSAGE).build();
+			}
 			return ResponseBean.builder().data(prepareProjectsBeanFromProjects(projectDao.getAllActiveProjects()))
 					.status(true).hasError(false).message(MessageConstant.SUCCESS_MESSAGE).build();
 		} catch (Exception e) {
@@ -75,7 +90,7 @@ public class ProjectServiceImpl implements IProjectService {
 					MessageConstant.QUERY_FETCH_EXCPTION);
 		}
 	}
-	
+
 	private List<ProjectBean> prepareProjectsBeanFromProjects(List<Project> allProjects) {
 		List<ProjectBean> projectBeans = new ArrayList<ProjectBean>();
 		allProjects.forEach(project -> {
@@ -84,5 +99,14 @@ public class ProjectServiceImpl implements IProjectService {
 			projectBeans.add(projectBean);
 		});
 		return projectBeans;
+	}
+	
+	private List<ProjectBean> prepareProjectsBeanFromProjectsForOwners() {
+		List<Long> projectIds = assignFlatToOwnerDao
+				.getFlatByOwnerId(userLoginRequestScopeBean.getOwner().getOwnerId());
+		if (projectIds != null && !projectIds.isEmpty())
+			return prepareProjectsBeanFromProjects(projectDao.getProjectByProjectIdList(projectIds));
+		else
+			return null;
 	}
 }

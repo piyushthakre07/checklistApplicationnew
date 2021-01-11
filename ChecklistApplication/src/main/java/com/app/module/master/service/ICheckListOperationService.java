@@ -2,6 +2,8 @@ package com.app.module.master.service;
 
 import java.util.List;
 
+import org.springframework.core.io.ByteArrayResource;
+
 import com.app.beans.CheckListOperationBean;
 import com.app.beans.CheckListOperationDefectRequestBean;
 import com.app.beans.ResponseBean;
@@ -25,7 +27,7 @@ public interface ICheckListOperationService {
 	ResponseBean insertOrUpdateCheckListOperation(CheckListOperationBean checkListOperationBean)
 			throws CheckListAppException;
 
-	 List<byte[]> getDefectCheckListOperationByFlatIdAndWorTypeAndTaskIdAndRoomId(Long flatId, Long workTypeId,
+	List<ByteArrayResource> getDefectCheckListOperationByFlatIdAndWorTypeAndTaskIdAndRoomId(Long flatId, Long workTypeId,
 			Long taskId, Long roomId) throws CheckListAppException;
 
 	ResponseBean getCheckListOperationReportNew(CheckListOperationBean checkListOperationBean)

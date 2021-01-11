@@ -16,6 +16,8 @@ import com.app.beans.FlatTypeBean;
 import com.app.beans.FloorBean;
 import com.app.beans.ProjectBean;
 import com.app.beans.ResponseBean;
+import com.app.beans.UserLoginRequestScopeBean;
+import com.app.constant.GenericConstant;
 import com.app.constant.MessageConstant;
 import com.app.entities.Building;
 import com.app.entities.Flat;
@@ -23,6 +25,7 @@ import com.app.entities.FlatType;
 import com.app.entities.Floor;
 import com.app.entities.Project;
 import com.app.exception.CheckListAppException;
+import com.app.module.master.repository.IAssignFlatToOwnerDao;
 import com.app.module.master.repository.IFlatDao;
 import com.app.module.master.service.IFlatService;
 
@@ -39,6 +42,12 @@ public class FlatServiceImpl implements IFlatService {
 
 	@Autowired
 	IFlatDao flatDao;
+	
+	@Autowired
+	UserLoginRequestScopeBean userLoginRequestScopeBean;
+
+	@Autowired
+	IAssignFlatToOwnerDao assignFlatToOwnerDao;
 
 	@Override
 	public ResponseBean insertOrUpdateFlat(FlatBean flatBean) throws CheckListAppException {
@@ -96,6 +105,12 @@ public class FlatServiceImpl implements IFlatService {
 	@Override
 	public ResponseBean getActiveFlats() throws CheckListAppException {
 		try {
+			if (userLoginRequestScopeBean != null && userLoginRequestScopeBean.getUserType() != null
+					&& userLoginRequestScopeBean.getUserType().equals(GenericConstant.OWNER)) {
+				return ResponseBean.builder().data(prepareFlatBeanForOwners()).status(true)
+						.hasError(false).message(MessageConstant.SUCCESS_MESSAGE).build();
+				
+			}
 			return ResponseBean.builder().data(prepareFlatBeansFromFlat(flatDao.getActiveFlats())).status(true)
 					.hasError(false).message(MessageConstant.SUCCESS_MESSAGE).build();
 		} catch (Exception e) {
@@ -110,6 +125,11 @@ public class FlatServiceImpl implements IFlatService {
 			if (Objects.isNull(floorId) || floorId == 0)
 				return getActiveFlats();
 
+			if (userLoginRequestScopeBean != null && userLoginRequestScopeBean.getUserType() != null
+					&& userLoginRequestScopeBean.getUserType().equals(GenericConstant.OWNER)) {
+				return ResponseBean.builder().data(prepareFlatBeanForOwners(floorId))
+						.status(true).hasError(false).message(MessageConstant.SUCCESS_MESSAGE).build();
+			}
 			return ResponseBean.builder().data(prepareFlatBeansFromFlat(flatDao.getActiveFlatsByFloorId(floorId)))
 					.status(true).hasError(false).message(MessageConstant.SUCCESS_MESSAGE).build();
 		} catch (Exception e) {
@@ -124,6 +144,12 @@ public class FlatServiceImpl implements IFlatService {
 			if (Objects.isNull(buildingId) || buildingId == 0)
 				return getActiveFlats();
 
+			if (userLoginRequestScopeBean != null && userLoginRequestScopeBean.getUserType() != null
+					&& userLoginRequestScopeBean.getUserType().equals(GenericConstant.OWNER)) {
+				return ResponseBean.builder().data(prepareFlatBeanForOwnersByBuildingId(buildingId))
+						.status(true).hasError(false).message(MessageConstant.SUCCESS_MESSAGE).build();
+			}
+			
 			return ResponseBean.builder().data(prepareFlatBeansFromFlat(flatDao.getActiveFlatsByBuildingId(buildingId)))
 					.status(true).hasError(false).message(MessageConstant.SUCCESS_MESSAGE).build();
 		} catch (Exception e) {
@@ -178,5 +204,33 @@ public class FlatServiceImpl implements IFlatService {
 			flatBeans.add(flatBean);
 		});
 		return flatBeans;
+	}
+	
+	
+	private List<FlatBean> prepareFlatBeanForOwners() {
+		List<Long> flatIds = assignFlatToOwnerDao
+				.getFlatIdsByOwnerId(userLoginRequestScopeBean.getOwner().getOwnerId());
+		if (flatIds != null && !flatIds.isEmpty())
+			return prepareFlatBeansFromFlat(flatDao.getFlatByFlatIdList(flatIds));
+		else
+			return null;
+	}
+	
+	private List<FlatBean> prepareFlatBeanForOwners(Long floorId) {
+		List<Long> flatIds = assignFlatToOwnerDao
+				.getFlatIdsByOwnerId(userLoginRequestScopeBean.getOwner().getOwnerId());
+		if (flatIds != null && !flatIds.isEmpty())
+			return prepareFlatBeansFromFlat(flatDao.getFlatByFlatIdList(flatIds,floorId));
+		else
+			return null;
+	}
+	
+	private List<FlatBean> prepareFlatBeanForOwnersByBuildingId(Long buildingId) {
+		List<Long> flatIds = assignFlatToOwnerDao
+				.getFlatIdsByOwnerId(userLoginRequestScopeBean.getOwner().getOwnerId());
+		if (flatIds != null && !flatIds.isEmpty())
+			return prepareFlatBeansFromFlat(flatDao.prepareFlatBeanForOwnersByBuildingId(flatIds,buildingId));
+		else
+			return null;
 	}
 }

@@ -27,23 +27,11 @@ public class AssignFlatToOwner extends AuditMaster {
 	private Long assignFlatToOwnerId;
 
 	@OneToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "project_id")
-	private Project project;
-
-	@OneToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "building_id")
-	private Building building;
-
-	@OneToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "floor_id")
-	private Floor floor;
-
-	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "flat_id")
 	private Flat flat;
 
 	@OneToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "work_type_id")
+	@JoinColumn(name = "owner")
 	private Owner owner;
 
 	private boolean active;

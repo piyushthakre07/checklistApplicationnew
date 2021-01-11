@@ -67,15 +67,12 @@ public class CheckListOperationController {
 		return new ResponseEntity<Object>(checkListOperationService.getCheckListOperationTaskDetailsByFlatIdAndAndWorTypeAndTaskIdAndRoomId(flatId, workTypeId, taskId), HttpStatus.OK);
 	}
 	
-	@GetMapping(value = "/getDefectCheckListOperationByFlatIdAndWorTypeAndTaskIdAndRoomId/{flatId}/{workTypeId}/{taskId}/{roomId}",  produces = MediaType.IMAGE_JPEG_VALUE)
+	@GetMapping(value = "/getDefectCheckListOperationByFlatIdAndWorTypeAndTaskIdAndRoomId/{flatId}/{workTypeId}/{taskId}/{roomId}")
 	public ResponseEntity<Object> getDefectCheckListOperationByFlatIdAndWorTypeAndTaskIdAndRoomId(@PathVariable("flatId") Long flatId,@PathVariable("workTypeId") Long workTypeId,@PathVariable("taskId") Long taskId,@PathVariable("roomId") Long roomId)
 			throws CheckListAppException {
-		//return new ResponseEntity<Object>(checkListOperationService.getDefectCheckListOperationByFlatIdAndWorTypeAndTaskIdAndRoomId(flatId, workTypeId, taskId,roomId), HttpStatus.OK);
-		  return ResponseEntity
-	                .ok()
-	                .contentType(MediaType.IMAGE_JPEG)
-	                .body(checkListOperationService.getDefectCheckListOperationByFlatIdAndWorTypeAndTaskIdAndRoomId(flatId, workTypeId, taskId,roomId));
-	
+		return new ResponseEntity<Object>(checkListOperationService
+				.getDefectCheckListOperationByFlatIdAndWorTypeAndTaskIdAndRoomId(flatId, workTypeId, taskId, roomId),
+				HttpStatus.OK);
 	}
 	
 	@ApiOperation(value = "CheckListOperation Report", response = ResponseEntity.class)
@@ -96,6 +93,7 @@ public class CheckListOperationController {
 	@PostMapping(value = "/defectInsertCheckListOperation")
 	public ResponseEntity<Object> defectInsertCheckListOperation(@ModelAttribute CheckListOperationDefectRequestBean checkListOperationDefectRequestBean)
 			throws CheckListAppException {
+		
 		return new ResponseEntity<Object>(checkListOperationService.insertOrUpdateCheckListOperationDefect(checkListOperationDefectRequestBean), HttpStatus.OK);
 	}
 }

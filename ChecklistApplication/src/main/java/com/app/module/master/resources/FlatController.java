@@ -65,13 +65,13 @@ public class FlatController {
 	}
 
 	@GetMapping(value = "/getActiveFlatsByFloorId/{floorId}")
-	public ResponseEntity<Object> getActiveFlatsByFloorId(Long floorId) throws CheckListAppException {
+	public ResponseEntity<Object> getActiveFlatsByFloorId(@PathVariable("floorId") Long floorId) throws CheckListAppException {
 		ResponseBean responseBean = flatService.getActiveFlatsByFloorId(floorId);
 		return new ResponseEntity<Object>(responseBean, HttpStatus.OK);
 	}
 
 	@GetMapping(value = "/getActiveFlatsByBuildingId/{buildingId}")
-	public ResponseEntity<Object> getActiveFlatsByBuildingId(Long buildingId) throws CheckListAppException {
+	public ResponseEntity<Object> getActiveFlatsByBuildingId(@PathVariable("buildingId") Long buildingId) throws CheckListAppException {
 		ResponseBean responseBean = flatService.getActiveFlatsByBuildingId(buildingId);
 		return new ResponseEntity<Object>(responseBean, HttpStatus.OK);
 	}
