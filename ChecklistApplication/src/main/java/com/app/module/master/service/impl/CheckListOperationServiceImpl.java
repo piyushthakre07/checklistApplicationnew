@@ -513,7 +513,7 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 				BeanUtils.copyProperties(checkListOperationTaskDetails.getTask(), task);
 				checkListOperationTaskResponseBean.setTask(task);
 
-				RoomBean room = new RoomBean();
+				RoomResponseBean room = new RoomResponseBean();
 				BeanUtils.copyProperties(checkListOperationTaskDetails.getRoom(), room);
 				checkListOperationTaskResponseBean.setRoom(room);
 
@@ -586,19 +586,16 @@ public class CheckListOperationServiceImpl implements ICheckListOperationService
 
 				CheckListOperationTaskResponseBean checkListOperationTaskResponseBean = new CheckListOperationTaskResponseBean();
 				BeanUtils.copyProperties(checkListOperationTaskDetails, checkListOperationTaskResponseBean);
-
 				TaskBean task = new TaskBean();
 				BeanUtils.copyProperties(checkListOperationTaskDetails.getTask(), task);
 				checkListOperationTaskResponseBean.setTask(task);
-
-				RoomBean room = new RoomBean();
+				RoomResponseBean room = new RoomResponseBean();
 				BeanUtils.copyProperties(checkListOperationTaskDetails.getRoom(), room);
+				room.setUserChecked(checkListOperationTaskDetails.getUserCheck());
+				room.setOwnerChecked(checkListOperationTaskDetails.getOwnerCheck());
+				room.setFaultUser(checkListOperationTaskDetails.getFaultUser());
+				room.setFaultOwner(checkListOperationTaskDetails.getFaultOwner());
 				checkListOperationTaskResponseBean.setRoom(room);
-
-				checkListOperationTaskResponseBean.setUserChecked(checkListOperationTaskDetails.getUserCheck());
-				checkListOperationTaskResponseBean.setOwnerChecked(checkListOperationTaskDetails.getOwnerCheck());
-				checkListOperationTaskResponseBean.setFaultUser(checkListOperationTaskDetails.getFaultUser());
-				checkListOperationTaskResponseBean.setFaultOwner(checkListOperationTaskDetails.getFaultOwner());
 				try {
 					List<AssignWorkToContractorResponseBean> list = assignWorkToContractorService
 							.getAssignWorkToContractorByFlatIdNWorkType(checkListOperation.getFlat().getFlatId(),

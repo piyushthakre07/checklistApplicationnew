@@ -1,5 +1,7 @@
 package com.app.module.master.resources;
 
+import java.io.IOException;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,13 +15,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.app.beans.ProjectBean;
 import com.app.exception.CheckListAppException;
 import com.app.module.master.service.IProjectService;
 
 import io.swagger.annotations.ApiOperation;
+import springfox.documentation.service.ResponseMessage;
 
 /**
  * @author Piyush.Thakre
@@ -63,5 +68,11 @@ public class ProjectController {
 			throws CheckListAppException {
 		return new ResponseEntity<Object>(projectService.getProjectByProjectId(projectId), HttpStatus.OK);
 	}
+	
+	  @PostMapping(value = "/uploadProject", produces = MediaType.APPLICATION_JSON_VALUE)
+	  public  ResponseEntity<Object>  uploadProject(@RequestParam("file") MultipartFile file) throws CheckListAppException {
+	    return new ResponseEntity<Object>(projectService.uploadExcellProject(file), HttpStatus.OK);
+	    }
+
 
 }

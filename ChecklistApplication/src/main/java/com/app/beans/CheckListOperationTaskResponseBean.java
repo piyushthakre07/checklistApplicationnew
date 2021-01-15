@@ -11,7 +11,10 @@ public class CheckListOperationTaskResponseBean {
 
 	private TaskBean task;
 
-	private RoomBean room;
+	//private RoomBean room;
+	
+	private RoomResponseBean room;
+	
 
 	private ContractorBean contractor;
 
